@@ -411,6 +411,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\lcd1602.c</FilePath>
             </File>
+            <File>
+              <FileName>global.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\global.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

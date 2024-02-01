@@ -92,7 +92,7 @@ void LCD1602_WriteByte(bit rs, unsigned char byte)
     RW = 0;
     RS = rs; // 0 写命令  1 写数据
     DT = byte;
-    EN = 1; // EN: 0 -> 1
+    EN = 1; // EN: 1 -> 0
     _nop_();
     EN = 0;
 }
