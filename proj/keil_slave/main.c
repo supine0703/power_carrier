@@ -2,7 +2,7 @@
  * 1: 将单个按键组值赋给P1
  * 2: 单个将按键组的值显示LCD1602
  */
-#define MODEL 1
+#define MODEL 4
 #include "__config__.h"
 
 #define uchar unsigned char
@@ -51,6 +51,58 @@ void FUNC(MODEL)(uchar buf)
 }
 #elif MODEL == 2
 uchar addr = 0x02;
+#include "lcd1602.h"
+// 开启 LCD1602 显示 (initial)
+void FuncInit(void)
+{
+    uchar num;
+    LCD1602_WriteCmd(Set_8bit_2line_5x7);   // 命令6
+    LCD1602_WriteCmd(Show_CursorOff);       // 命令4
+    LCD1602_WriteCmd(Mode_CursorRightMove); // 命令3
+    LCD1602_WriteCmd(Clear_Screen);         // 命令1
+    LCD1602_WriteCmd(Move_Cursor_Row1_Col(6));
+    num = MODEL >> 4;
+    num += num >= 10 ? 55 : 48;
+    LCD1602_WriteData(num);
+    num = MODEL & 0x0f;
+    num += num >= 10 ? 55 : 48;
+    LCD1602_WriteData(num);
+    LCD1602_WriteData(':');
+}
+
+void FUNC(MODEL)(uchar buf)
+{
+    LCD1602_WriteCmd(Move_Cursor_Row1_Col(9));
+    LCD1602_WriteData(buf);
+}
+#elif MODEL == 3
+uchar addr = 0x03;
+#include "lcd1602.h"
+// 开启 LCD1602 显示 (initial)
+void FuncInit(void)
+{
+    uchar num;
+    LCD1602_WriteCmd(Set_8bit_2line_5x7);   // 命令6
+    LCD1602_WriteCmd(Show_CursorOff);       // 命令4
+    LCD1602_WriteCmd(Mode_CursorRightMove); // 命令3
+    LCD1602_WriteCmd(Clear_Screen);         // 命令1
+    LCD1602_WriteCmd(Move_Cursor_Row1_Col(6));
+    num = MODEL >> 4;
+    num += num >= 10 ? 55 : 48;
+    LCD1602_WriteData(num);
+    num = MODEL & 0x0f;
+    num += num >= 10 ? 55 : 48;
+    LCD1602_WriteData(num);
+    LCD1602_WriteData(':');
+}
+
+void FUNC(MODEL)(uchar buf)
+{
+    LCD1602_WriteCmd(Move_Cursor_Row1_Col(9));
+    LCD1602_WriteData(buf);
+}
+#elif MODEL == 4
+uchar addr = 0x04;
 #include "lcd1602.h"
 // 开启 LCD1602 显示 (initial)
 void FuncInit(void)

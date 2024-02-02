@@ -52,11 +52,11 @@ Mkfile.old
 dkms.conf
 
 # my own setting
+.vscode
 /proj/keil_*/Listings/*
 /proj/keil_*/Objects/*
 /proj/keil_*/*.uvgui.*
 /proj/keil_*/*.uvopt
-/proj/keil_*/.vscode
 /proj/proteus/*
 !/proj/keil_*/Objects/*.hex
 !/proj/proteus/*.pdsprj

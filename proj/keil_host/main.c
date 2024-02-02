@@ -10,24 +10,23 @@ void Delay1ms(uint t);
 void LCD1602_Action(void);
 void LCD1602_ShowString(uchar* s, uint t);
 
-uchar lcd_action_line1[] = "   Welcome to   ";
+uchar lcd_action_line1[] = "ABCDEFGHIJKLMNOP";
 uchar lcd_action_line2[] = "abcdefghijklmnop";
 
 extern uchar baudRateT;
 
 void main(void)
 {
-    uchar key;
+    uchar key, count = 0;
     uchar num[] = {0, 0};
 
     LCD1602_Action();
     // 串口初始化
     SCON = 0xe8; // 设置串口控制寄存器SCON=1110 1000
     PCON = 0x00; // 设定电源控制寄存器PCON，这里表示波特率不加倍
-    TMOD = 0x20; // 定时器T1的工作方式2
+    TMOD = 0x20;           // 定时器T1的工作方式2
     TH1 = TL1 = baudRateT; // 波特率 9600bps
-    TR1 = 1;          // 启动定时器
-
+    TR1 = 1;               // 启动定时器
 
     while (1)
     {
@@ -38,11 +37,35 @@ void main(void)
 
         if (key != 0xff)
         {
-            num[0] = key + ((key >= 10) ? ('A' - 10) : '0');
+            count++;
+            if (count == 17)
+            {
+                LCD1602_WriteCmd(Move_Cursor_Row2_Col(0));
+                LCD1602_ShowString("                ", 0);
+                LCD1602_WriteCmd(Move_Cursor_Row2_Col(0));
+            }
+            else if (count == 33)
+            {
+                count = 1;
+                LCD1602_WriteCmd(Move_Cursor_Row1_Col(0));
+                LCD1602_ShowString("                ", 0);
+                LCD1602_WriteCmd(Move_Cursor_Row1_Col(0));
+            }
+
+            num[0] = key + (key >= 10 ? ('A' - 10) : '0');
             LCD1602_ShowString(num, 0);
 
-            TB8 = 1;     // 发送地址
-            SBUF = 0x01; // 把地址发送出去
+            TB8 = 1; // 发送地址
+            SBUF = (key >> 2) + 1; // 把地址发送出去
+            // if (key < 4) { // 方法二
+            //     SBUF = 0x01; // 把地址发送出去
+            // } else if (key < 8) {
+            //     SBUF = 0x02; // 把地址发送出去
+            // } else if (key < 12) {
+            //     SBUF = 0x03; // 把地址发送出去
+            // } else if (key < 16) {
+            //     SBUF = 0x04; // 把地址发送出去
+            // }
             while (!TI)
                 ; // 判断是否发送成功(发送成功后TI会置1，需手动清0)
             TI = 0;
@@ -122,33 +145,47 @@ void LCD1602_Action(void)
 #endif
     // 开启 LCD1602 显示 (initial)
     LCD1602_WriteCmd(Set_8bit_2line_5x7);   // 命令6
-    LCD1602_WriteCmd(Show_CursorOff);       // 命令4
+    LCD1602_WriteCmd(Show_CursorFlicker);   // 命令4
     LCD1602_WriteCmd(Mode_CursorRightMove); // 命令3
     LCD1602_WriteCmd(Clear_Screen);         // 命令1
 
 #ifdef USE_LCD1602_ACTION
     // 开机界面
+    // LCD1602_WriteCmd(Move_Cursor_Row1_Col(16)); // 命令8 设置光标在显示屏之外
+    // LCD1602_ShowString(lcd_action_line1, 0);
+    // LCD1602_WriteCmd(Move_Cursor_Row2_Col(16)); // 命令8
+    // LCD1602_WriteCmd(Mode_ScreenRightMove);     // 命令3
+    // LCD1602_ShowString(lcd_action_line2, 200); // 一边输出第二行 一边移动屏幕
+    // LCD1602_WriteCmd(Mode_CursorRightMove); // 命令3  恢复光标自增
+
+    // i = 3;
+    // do // 闪烁三次
+    // {
+    //     LCD1602_WriteCmd(Show_ScreenOff); // 命令4
+    //     Delay1ms(400);
+    //     LCD1602_WriteCmd(Show_CursorOff); // 命令4
+    //     Delay1ms(400);
+    // } while (--i);
+    // i = 16;
+    // do
+    // {
+    //     LCD1602_WriteCmd(Shift_ScreenRight); // 命令5
+    //     Delay1ms(200);
+    // } while (--i);                  // 字体移出屏幕
+    // LCD1602_WriteCmd(Clear_Screen); // 命令1 清屏
     LCD1602_WriteCmd(Move_Cursor_Row1_Col(16)); // 命令8 设置光标在显示屏之外
     LCD1602_ShowString(lcd_action_line1, 0);
-    LCD1602_WriteCmd(Move_Cursor_Row2_Col(16)); // 命令8
-    LCD1602_WriteCmd(Mode_ScreenRightMove);     // 命令3
-    LCD1602_ShowString(lcd_action_line2, 200); // 一边输出第二行 一边移动屏幕
-    LCD1602_WriteCmd(Mode_CursorRightMove); // 命令3  恢复光标自增
+    LCD1602_WriteCmd(Move_Cursor_Row2_Col(8)); // 命令8
 
-    i = 3;
-    do // 闪烁三次
-    {
-        LCD1602_WriteCmd(Show_ScreenOff); // 命令4
-        Delay1ms(400);
-        LCD1602_WriteCmd(Show_CursorOff); // 命令4
-        Delay1ms(400);
-    } while (--i);
     i = 16;
     do
     {
         LCD1602_WriteCmd(Shift_ScreenRight); // 命令5
         Delay1ms(200);
-    } while (--i);                  // 字体移出屏幕
+    } while (--i); // 字体移出屏幕
+    LCD1602_WriteCmd(Mode_ScreenLeftMove);
+    LCD1602_ShowString(lcd_action_line2, 200);
+    LCD1602_WriteCmd(Mode_CursorRightMove);
     LCD1602_WriteCmd(Clear_Screen); // 命令1 清屏
 #endif
 } // LCD1602 Action
