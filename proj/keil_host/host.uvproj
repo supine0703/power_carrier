@@ -401,6 +401,11 @@
               <FileType>5</FileType>
               <FilePath>..\include\lcd1602.h</FilePath>
             </File>
+            <File>
+              <FileName>communication.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\communication.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -415,6 +420,11 @@
               <FileName>global.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\global.c</FilePath>
+            </File>
+            <File>
+              <FileName>communication.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\communication.c</FilePath>
             </File>
           </Files>
         </Group>

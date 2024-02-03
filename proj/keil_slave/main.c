@@ -4,6 +4,7 @@
  */
 #define MODEL 4
 #include "__config__.h"
+#include "communication.h"
 
 #define uchar unsigned char
 #define uint unsigned int
@@ -156,19 +157,10 @@ void main(void)
 void int_4() interrupt 4
 {
     ES = 0; // 禁止串行中断，放置在发送数据器件突然发送中断
-    RI = 0;
-    if (RB8 == 1) // 收到地址
-    {
-        if (SBUF == addr || addr == 0) // 判断主机进行中断的函数
-        {
-            SM2 = 0;
-        }
-    }
-    else
+    if (Receive(addr))
     {
         pFunc = FUNC(MODEL);
         pFunc(SBUF);
-        SM2 = 1;
     }
     ES = 1;
 }

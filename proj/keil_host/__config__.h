@@ -42,9 +42,13 @@
 // #define LCD1602_USE_DEFAULT // 使用默认配置
 #define LCD1602_NO_READDATA      // 不编译LCD1602_ReadData(void)
 #define LCD1602_DATA P0          // 数据 to LCD1602
-#define LCD1602_DEFINE_RS P2 ^ 0 // 寄存器选择
-#define LCD1602_DEFINE_RW P2 ^ 1 // 读/写
-#define LCD1602_DEFINE_EN P2 ^ 2 // 使能
+#define LCD1602_DEFINE_RS P3 ^ 5 // 寄存器选择
+#define LCD1602_DEFINE_RW P3 ^ 6 // 读/写
+#define LCD1602_DEFINE_EN P3 ^ 7 // 使能
+
+// ----- define for communication ------
+
+#define NO_RECEIVE // 不编译接收函数
 
 // -------------------------------------
 

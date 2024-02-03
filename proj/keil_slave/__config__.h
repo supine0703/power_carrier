@@ -46,8 +46,9 @@
 #define LCD1602_DEFINE_RW P2 ^ 1 // 读/写
 #define LCD1602_DEFINE_EN P2 ^ 2 // 使能
 
-// -------------------------------------
+// ----- define for communication ------
 
+#define NO_TRANSMIT // 不编译发送函数
 
 // -------------------------------------
 
