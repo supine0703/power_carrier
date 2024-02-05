@@ -10,118 +10,75 @@
 #define uchar unsigned char
 #define uint unsigned int
 
-#define _ADD_END_
+#define NO_SIGNED_INT
 
 /**
  * @param num 需要转换的数字
+ * @param sys 转为几进制字符串 2, 8, 10, 16 否则默认10进制
  * @param str 存储字符串的首地址
  * @param length 转换后数字可以存放的空间长度(不包含'\0')
  * @param decimal 小数占多少位
  */
-void Int8ToString(char num, uchar* str, uchar length)
+void UInt8ToString(uchar num, uchar sys, uchar* str, uchar length)
 {
-    bit neg;
-
-#ifdef _ADD_END_
+    uchar i;
     str[length] = 0; // 字符串结束标志位
-#endif
 
-    neg = num < 0;
     if (!length)
-        return;
-    if (neg)
-    {
-        if (!--length)
-            return;
-        ++str;
-        num = ~num;
-        ++num;
-    }
-    str[--length] = num % 10 + '0';
+        return; // 如果空间为0直接返回
+
+    i = length; // 备份 length
+
+    if (sys != 2 && sys != 8 && sys != 10 && sys != 16)
+        sys = 10; // 2, 8, 10, 16 否则默认10进制
+
+    str[--length] = num % sys + '0'; // 将数从低位开始转成对应ascii
     while (length)
     {
-        num /= 10;
+        num /= sys; // 按进制右移一位继续转
         if (!num)
-            break;
-        str[--length] = num % 10 + '0';
+            break; // 如果全部转成字符串空间没用完 退出循环
+        str[--length] = num % sys + '0';
     }
-    if (neg)
-    {
-        --str;
-        if (!length)
-            *str = '-';
-        str[length] = '-';
-    }
+
+    if (sys == 16)
+        while (i-- > length)
+        {
+            if (str[i] > '9')
+                str[i] += 7; // 十六进制需要将超出'9'的部分转为'A'-'F'
+        }
+
     while (length)
-        str[--length] = ' ';
+        str[--length] = ' '; // 前面多余的空间用空白补全
 }
 
-void FloatToString(float num, uchar* str, uchar length, uchar decimal)
+#ifndef NO_SIGNED_INT
+void Int8ToString(char num, uchar sys, uchar* str, uchar length)
 {
-    char i, mid;
-    uint intn, decn;
-    float dec, std;
+    uchar n;
 
-#ifdef _ADD_END_
-    str[length] = 0; // 字符串结束标志位
-#endif
+    if (!length)
+        return; // 如果空间为0直接返回
 
-    std = 0.4;
-    // 确定小数点的位置
-    if (decimal != 0)
-    {
-        if (decimal + (num < 0) + 1 > length)
-        {
-            mid = num < 0;
-            decimal = length - 1 - (num < 0);
-        }
-        else
-            mid = length - decimal - 1;
-        str[mid] = '.';
-    }
-    else
-        mid = length;
-
-    // 五舍六入
-    i = decimal;
-    while (i--)
-        std *= 0.1;
-
-    // 分离整数和小数部分
     if (num < 0)
     {
-        num -= std;
-        intn = -(int)num;
-        dec = (int)num - num;
+        if (!--length)
+            return; // 如果是负数应该至少有一个负号和一个数的空间
+        *str = ' '; // 为后面添加负号统一格式
+        ++str;      // 将第一个空间预留给负号
+        n = -num;   // num取补码(取负数)
     }
     else
-    {
-        num += std;
-        intn = (int)num;
-        dec = num - intn;
-    }
+        n = num;
 
-    // 处理小数部分
-    for (i = mid + 1; i < length; ++i)
-    {
-        dec *= 10;
-        decn = (uchar)dec;
-        str[i] = decn + '0';
-        dec -= decn;
+    UInt8ToString(n, sys, str, length);
+
+    if (num < 0)
+    { // 负数添加负号
+        --str;
+        while (str[--length] != ' ')
+            ; // 排除前面的数字直到找到负号
+        str[length] = '-';
     }
-    // 处理整数部分
-    for (i = mid - 1; i > 0; --i)
-    {
-        str[i] = intn % 10 + '0';
-        intn /= 10;
-        if (intn == 0)
-        {
-            --i;
-            break;
-        }
-    }
-    str[i] = num < 0 ? '-' : (intn == 0 && mid != 1 ? ' ' : intn % 10 + '0');
-    while (i-- > 0)
-        str[i] = ' ';
 }
-
+#endif

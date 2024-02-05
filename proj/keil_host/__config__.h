@@ -48,7 +48,10 @@
 
 // ----- define for communication ------
 
-#define NO_RECEIVE // 不编译接收函数
+#define ALL_RECEIVE 0x00
+#define END_RECEIVE '$'
+#define USE_QUERY_RECEIVE_D   // 使用查询方式接收
+#define USE_QUERY_TRANSMIT_A_D // 使用查询方式发送
 
 // -------------------------------------
 

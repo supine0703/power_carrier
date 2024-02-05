@@ -402,9 +402,14 @@
               <FilePath>..\include\lcd1602.h</FilePath>
             </File>
             <File>
-              <FileName>communication.h</FileName>
+              <FileName>serialport.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\include\communication.h</FilePath>
+              <FilePath>..\include\serialport.h</FilePath>
+            </File>
+            <File>
+              <FileName>utility.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\utility.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -417,14 +422,19 @@
               <FilePath>..\src\lcd1602.c</FilePath>
             </File>
             <File>
+              <FileName>serialport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\serialport.c</FilePath>
+            </File>
+            <File>
+              <FileName>utility.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\utility.c</FilePath>
+            </File>
+            <File>
               <FileName>global.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\global.c</FilePath>
-            </File>
-            <File>
-              <FileName>communication.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\communication.c</FilePath>
             </File>
           </Files>
         </Group>

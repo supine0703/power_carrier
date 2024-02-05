@@ -1,7 +1,8 @@
 // #define USE_LCD1602_ACTION
 #include "__config__.h"
-#include "communication.h"
+#include "serialport.h"
 #include "lcd1602.h"
+#include "utility.h"
 
 #define uchar unsigned char
 #define uint unsigned int
@@ -19,7 +20,7 @@ extern uchar baudRateT;
 void init(void)
 {
     // 串口初始化
-    SCON = 0xe8; // 设置串口控制寄存器SCON=1110 1000
+    SCON = 0xd0; // 设置串口控制寄存器SCON=1101 0000
     PCON = 0x00; // 设定电源控制寄存器PCON，这里表示波特率不加倍
     TMOD = 0x20;           // 定时器T1的工作方式2
     TH1 = TL1 = baudRateT; // 波特率 9600bps
@@ -28,6 +29,7 @@ void init(void)
 
 void main(void)
 {
+    bit c = 0;
     uchar key, count = 0;
     uchar num[] = {0, 0};
 
@@ -44,13 +46,13 @@ void main(void)
         if (key != 0xff)
         {
             count++;
-            if (count == 17)
+            if (count == 9)
             {
                 LCD1602_WriteCmd(Move_Cursor_Row2_Col(0));
                 LCD1602_ShowString("                ", 0);
                 LCD1602_WriteCmd(Move_Cursor_Row2_Col(0));
             }
-            else if (count == 33)
+            else if (count == 17)
             {
                 count = 1;
                 LCD1602_WriteCmd(Move_Cursor_Row1_Col(0));
@@ -58,9 +60,17 @@ void main(void)
                 LCD1602_WriteCmd(Move_Cursor_Row1_Col(0));
             }
 
-            num[0] = key + (key >= 10 ? ('A' - 10) : '0');
+            UInt8ToString(key, 16, num, 1);
             LCD1602_ShowString(num, 0);
-            Transmit((key >> 2) + 1, num);
+            
+            SP_QTransmitAD((key >> 2) + 1, num, 1);
+            if (SP_QReceiveD(2, 0, 0))
+            {
+                num[0] = SBUF;
+                LCD1602_ShowString(num, 0);
+            }
+            else
+                LCD1602_ShowString("!", 0);
         }
     }
 }
@@ -109,10 +119,9 @@ void Delay1ms(uint t) // 12MHz
     {
         i = 123;    // mov : 1us
         while (i--) // mov dec mov jz : 6us * 124
-        {
-        } // jmp : 2us * 123
-    }     // 每当低位为 0 会多1us处理高位(dec) 忽略
-} // (8+1+8*124-2)us * t + ((t/256)+10+6)us 约 t ms
+            ;       // jmp : 2us * 123
+    }               // 每当低位为 0 会多1us处理高位(dec) 忽略
+} // (9+1+8*124-2=1000)us * t + ((t/256)+10+6)us 约 t ms
 
 // ============== LCD1602 ==============
 
@@ -142,7 +151,7 @@ void LCD1602_Action(void)
     LCD1602_ShowString(lcd_action_line1, 0);
     LCD1602_WriteCmd(Move_Cursor_Row2_Col(16)); // 命令8
     LCD1602_WriteCmd(Mode_ScreenRightMove);     // 命令3
-    LCD1602_ShowString(lcd_action_line2, 200);  // 一边输出第二行 一边移动屏幕
+    LCD1602_ShowString(lcd_action_line2, 200); // 一边输出第二行 一边移动屏幕
     LCD1602_WriteCmd(Mode_CursorRightMove); // 命令3  恢复光标自增
 
     i = 3;
