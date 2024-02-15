@@ -15,7 +15,7 @@
  *     - 对于查询方式 因为主动查询所以需要设置等待时间 否则可能会死等
  *     - 对于双机和多机区别仅有匹配地址 所以多机调用双机的函数
  * ----------------------------------------------------------------------------
- * 可以在 '__config__.h' 中通过宏定义选择需要编译的内容
+ * - 可以在 '__config__.h' 中通过宏定义选择需要编译的内容
  * @def USE_QUERY_TRANSMIT_B:      定义后会编译 SP_QReceiveByte
  * @def USE_QUERY_TRANSMIT_D:      定义后会编译 SP_QReceiveStr 及之前
  * @def USE_QUERY_TRANSMIT_A_D:    定义后会编译 SP_QReceiveAD 及之前
@@ -23,8 +23,11 @@
  * @def USE_INTERRUPT_RECEIVE_A_D: 定义后会编译 SP_IReceiveAD
  * @def USE_QUERY_RECEIVER_D:      定义后会编译 SP_QReceiveD 双机(直接)通信
  * @def USE_QUERY_RECEIVER_A_D:    定义后会编译 SP_QReceiveAD 多机通信 及之前
- * 可以选择定义
- * @def ALL_RECEIVE: 定义某一个地址为全部内容接收但是不可回复
+ * - 可以选择定义
+ * @def AR_ADDRESS: 定义某一个地址为全部内容接收但是不可回复
+ * @def PC_ADDRESS: 定义PC上位机的地址码
+ * @def BROADCAST_GROUP_END: 定义广播组的结束地址 如果没定义默认没有广播组
+ * @def BROADCAST_GROUP_LEN: 定义广播组的地址数量 如果没定义默认为1
  * @def END_RECEIVE: 定义一个字符串结束标志符 默认是'$' 不能是0:'\0'
  */
 #ifndef COMMUNICATION_H
@@ -75,13 +78,13 @@ extern bit SP_IReceiveAD(
  * @return 1: 有接收信息
  */
 extern bit SP_QReceiveD(
-    unsigned int wait, void (*func)(void), void (*answer)(void)
+    void (*func)(void), void (*answer)(void), unsigned int wait
 ); // 接收数据
 extern bit SP_QReceiveAD(
     unsigned char addr,
-    unsigned int wait,
     void (*func)(void),
-    void (*answer)(void)
+    void (*answer)(void),
+    unsigned int wait
 ); // 接收地址匹配后接收数据
 
 // ----------------------------------------------------------------------------

@@ -1,8 +1,10 @@
 // #define USE_LCD1602_ACTION
 #include "__config__.h"
-#include "serialport.h"
+#include "instructions.h"
 #include "lcd1602.h"
+#include "serialport.h"
 #include "utility.h"
+#include "crc16.h"
 
 #define uchar unsigned char
 #define uint unsigned int
@@ -12,8 +14,8 @@ void Delay1ms(uint t);
 void LCD1602_Action(void);
 void LCD1602_ShowString(uchar* s, uint t);
 
-uchar lcd_action_line1[] = "ABCDEFGHIJKLMNOP";
-uchar lcd_action_line2[] = "abcdefghijklmnop";
+// uchar lcd_action_line1[] = "ABCDEFGHIJKLMNOP";
+// uchar lcd_action_line2[] = "abcdefghijklmnop";
 
 extern uchar baudRateT;
 
@@ -27,53 +29,121 @@ void init(void)
     TR1 = 1;               // 启动定时器
 }
 
+// uchar str1[] = "c: 0";
+// uchar str2[] = "  pc:N  ";
+// uchar str3[] = "r:NO";
+// uchar* a1 = str1 + 2;
+// uchar* a2 = str2 + 5;
+// uchar* a3 = str3 + 2;
+// uchar ins[] = " ";
+
+
 void main(void)
 {
-    bit c = 0;
-    uchar key, count = 0;
-    uchar num[] = {0, 0};
-
-    LCD1602_Action();
-    init();
-
-    while (1)
-    {
-        // 接收按键
-        key = KeyValue();
-        while (KEY_MATRIX != 0x0f)
-            ; // 松开按键后
-
-        if (key != 0xff)
-        {
-            count++;
-            if (count == 9)
-            {
-                LCD1602_WriteCmd(Move_Cursor_Row2_Col(0));
-                LCD1602_ShowString("                ", 0);
-                LCD1602_WriteCmd(Move_Cursor_Row2_Col(0));
-            }
-            else if (count == 17)
-            {
-                count = 1;
-                LCD1602_WriteCmd(Move_Cursor_Row1_Col(0));
-                LCD1602_ShowString("                ", 0);
-                LCD1602_WriteCmd(Move_Cursor_Row1_Col(0));
-            }
-
-            UInt8ToString(key, 16, num, 1);
-            LCD1602_ShowString(num, 0);
-            
-            SP_QTransmitAD((key >> 2) + 1, num, 1);
-            if (SP_QReceiveD(2, 0, 0))
-            {
-                num[0] = SBUF;
-                LCD1602_ShowString(num, 0);
-            }
-            else
-                LCD1602_ShowString("!", 0);
-        }
-    }
+    crc1(s, 200);
+    crc2(s, 200);
+	crc1(s, 200);
+    crc2(s, 200);
+	crc1(s, 200);
+    crc2(s, 200);
 }
+
+// void main(void)
+// {
+//     uchar c = 0x80;
+//     ins[0] = _HELLO;
+
+//     // 初始化
+//     LCD1602_Action(); // LCD1602开机
+//     init();
+
+//     // 主循环
+//     while (1)
+//     {
+//         SM2 = 0;
+//         if (RI)
+//         {
+//             TB8 = !TB8;
+//             RI = 0;
+//             if (RB8)
+//             {
+                
+//                 SP_QTransmitByte(SBUF);
+//             }
+//             else
+//             {
+//                 SP_QTransmitByte(0xff);
+//             }
+//         }
+//         // LCD1602_WriteCmd(Clear_Screen);
+//         // LCD1602_ShowString(str1, 0);
+//         // LCD1602_ShowString(str2, 0);
+//         // LCD1602_ShowString(str3, 0);
+
+//         // UInt8ToString(++c, 16, a1, 2);
+//         // SP_QTransmitAD(PC_ADDRESS, ins, 1);
+//         // UInt8ToString(c, 16, a3, 2);
+//         // if (SP_QReceiveD(0, 0, 1000))
+//         // {
+//         //     *a2 = 'Y';
+//         //     UInt8ToString(SBUF, 16, a3, 2);
+//         // }
+//         // else
+//         // {
+//         //     *a2 = 'N';
+//         //     a3[0] = 'N';
+//         //     a3[1] = 'O';
+//         // }
+//     }
+// }
+
+// void main(void)
+// {
+//     bit c = 0;
+//     uchar key, count = 0;
+//     uchar num[] = {0, 0};
+
+//     LCD1602_Action();
+//     init();
+
+//     while (1)
+//     {
+//         // 接收按键
+//         key = KeyValue();
+//         while (KEY_MATRIX != 0x0f)
+//             ; // 松开按键后
+
+//         if (key != 0xff)
+//         {
+//             count++;
+//             if (count == 9)
+//             {
+//                 LCD1602_WriteCmd(Move_Cursor_Row2_Col(0));
+//                 LCD1602_ShowString("                ", 0);
+//                 LCD1602_WriteCmd(Move_Cursor_Row2_Col(0));
+//             }
+//             else if (count == 17)
+//             {
+//                 count = 1;
+//                 LCD1602_WriteCmd(Move_Cursor_Row1_Col(0));
+//                 LCD1602_ShowString("                ", 0);
+//                 LCD1602_WriteCmd(Move_Cursor_Row1_Col(0));
+//             }
+
+//             UInt8ToString(key, 16, num, 1);
+//             LCD1602_ShowString(num, 0);
+
+//             SP_QTransmitAD((key >> 2) + 1, num, 1);
+//             if (SP_QReceiveD(2, 0, 0))
+//             {
+//                 num[0] = SBUF;
+//                 LCD1602_ShowString(num, 0);
+//             }
+//             else
+//                 LCD1602_ShowString("!", 0);
+//         }
+//     }
+// }
 
 uchar KeyValue(void)
 {
@@ -141,7 +211,7 @@ void LCD1602_Action(void)
 #endif
     // 开启 LCD1602 显示 (initial)
     LCD1602_WriteCmd(Set_8bit_2line_5x7);   // 命令6
-    LCD1602_WriteCmd(Show_CursorFlicker);   // 命令4
+    LCD1602_WriteCmd(Show_CursorOn);        // 命令4
     LCD1602_WriteCmd(Mode_CursorRightMove); // 命令3
     LCD1602_WriteCmd(Clear_Screen);         // 命令1
 

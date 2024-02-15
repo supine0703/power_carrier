@@ -406,6 +406,11 @@
               <FileType>5</FileType>
               <FilePath>..\include\serialport.h</FilePath>
             </File>
+            <File>
+              <FileName>instructions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\instructions.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -829,6 +834,11 @@
               <FileName>serialport.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\include\serialport.h</FilePath>
+            </File>
+            <File>
+              <FileName>instructions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\instructions.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1254,6 +1264,11 @@
               <FileType>5</FileType>
               <FilePath>..\include\serialport.h</FilePath>
             </File>
+            <File>
+              <FileName>instructions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\instructions.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1678,6 +1693,11 @@
               <FileType>5</FileType>
               <FilePath>..\include\serialport.h</FilePath>
             </File>
+            <File>
+              <FileName>instructions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\instructions.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2101,6 +2121,11 @@
               <FileName>serialport.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\include\serialport.h</FilePath>
+            </File>
+            <File>
+              <FileName>instructions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\instructions.h</FilePath>
             </File>
           </Files>
         </Group>

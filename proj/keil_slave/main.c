@@ -2,7 +2,7 @@
  * 1: 将单个按键组值赋给P1
  * 2: 单个将按键组的值显示LCD1602
  */
-#define MODEL 4
+#define MODEL 1
 #include "__config__.h"
 #include "serialport.h"
 
@@ -26,7 +26,7 @@ void CONNECT___(Func, MODEL, _1)(void)
     P1 = SBUF - (SBUF >= 65 ? 55 : 48);
 }
 #elif MODEL == 1
-uchar addr = 0x01;
+uchar addr = 0x00;
 #include "lcd1602.h"
 // 开启 LCD1602 显示 (initial)
 void FuncInit(void)
@@ -49,7 +49,7 @@ void FuncInit(void)
 void CONNECT___(Func, MODEL, _1)(void)
 {
     LCD1602_WriteCmd(Move_Cursor_Row1_Col(9));
-    LCD1602_WriteData(SBUF);
+    LCD1602_WriteData('Y');
 }
 #elif MODEL == 2
 uchar addr = 0x02;

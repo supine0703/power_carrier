@@ -60,3 +60,4 @@ dkms.conf
 /proj/proteus/*
 !/proj/keil_*/Objects/*.hex
 !/proj/proteus/*.pdsprj
+/qt/build*/

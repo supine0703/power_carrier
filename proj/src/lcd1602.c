@@ -40,16 +40,16 @@ sbit EN = LCD1602_DEFINE_EN; // 使能
 void LCD1602_CheckBusy(void)
 {
     unsigned char busy;
+    unsigned char i = 1; // 防止程序陷入死循环无法挣脱
     DT = 0xff;
     do
     {
-        busy = 0xff;
         EN = 0;
         RS = 0;
         RW = 1;
         EN = 1;
         busy = DT;
-    } while (busy & 0x80);
+    } while (busy & 0x80 && ++i);
     EN = 0;
 }
 

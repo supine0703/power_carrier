@@ -48,8 +48,13 @@
 
 // ----- define for communication ------
 
-#define ALL_RECEIVE 0x00
-#define END_RECEIVE '$'
+#define AR_ADDRESS 0x00 // all receive address 全能接收地址
+#define PC_ADDRESS 0x01 // pc address PC机的地址
+
+#define BROADCAST_GROUP_END 0xff // 广播分组的尾地址
+#define BROADCAST_GROUP_LEN 0x10 // 广播分组的长度
+
+#define END_RECEIVE '$'        // 结束接受符号 0x36
 #define USE_INTERRUPT_RECEIVE // 使用中断方式接收
 #define USE_QUERY_TRANSMIT_B  // 使用查询方式发送一字节
 

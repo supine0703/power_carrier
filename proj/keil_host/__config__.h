@@ -44,18 +44,25 @@
 #define LCD1602_DATA P0          // 数据 to LCD1602
 #define LCD1602_DEFINE_RS P3 ^ 5 // 寄存器选择
 #define LCD1602_DEFINE_RW P3 ^ 6 // 读/写
-#define LCD1602_DEFINE_EN P3 ^ 7 // 使能
+#define LCD1602_DEFINE_EN P3 ^ 4 // 使能
 
 // ----- define for communication ------
 
-#define ALL_RECEIVE 0x00
-#define END_RECEIVE '$'
-#define USE_QUERY_RECEIVE_D   // 使用查询方式接收
+#define AR_ADDRESS 0x00 // all receive address 全能接收地址
+#define PC_ADDRESS 0x01 // pc address PC机的地址
+
+#define BROADCAST_GROUP_END 0xff // 广播分组的尾地址
+#define BROADCAST_GROUP_LEN 0x10 // 广播分组的长度
+
+#define END_RECEIVE '$'        // 结束接受符号 0x36
+#define USE_QUERY_RECEIVE_A_D  // 使用查询方式接收
 #define USE_QUERY_TRANSMIT_A_D // 使用查询方式发送
 
 // -------------------------------------
 
 #define KEY_MATRIX P1
+#define KEY_SP // 定义按键的引脚P
+#define KEY_SB // 定义按键有效的位
 
 // -------------------------------------
 

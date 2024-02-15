@@ -411,6 +411,16 @@
               <FileType>5</FileType>
               <FilePath>..\include\utility.h</FilePath>
             </File>
+            <File>
+              <FileName>instructions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\instructions.h</FilePath>
+            </File>
+            <File>
+              <FileName>crc16.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\include\crc16.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -435,6 +445,11 @@
               <FileName>global.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\global.c</FilePath>
+            </File>
+            <File>
+              <FileName>crc16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\crc16.c</FilePath>
             </File>
           </Files>
         </Group>
