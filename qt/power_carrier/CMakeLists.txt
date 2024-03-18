@@ -9,23 +9,22 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/Release")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/../Release")
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets SerialPort)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets SerialPort Sql)
 
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(SHARE_FILES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/share")
+    set(FILES_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(SHARE_FILES_PATH "./share")
+    set(FILES_PATH ".")
 endif()
 
 set(GLOBAL_DEFINED
-    FONT_NAME="Cascadia Mono, YEFONTJingHongXingKai"
-    FONT_SIZE=16
-    SHARE_PATH="${SHARE_FILES_PATH}"
-    CONFIG_INI="${SHARE_FILES_PATH}/config.ini"
+    SHARE_PATH="${FILES_PATH}/share"
+    CONFIG_INI="${FILES_PATH}/share/config.ini"
+    DB_PATH="${FILES_PATH}/db"
 )
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
@@ -36,34 +35,46 @@ set(PROJECT_NAMESPACE_DEFINED
     PROJECT_END_NAMESPACE=\}
 )
 
+set(INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(UI_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ui")
-include_directories(
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
-    "${UI_PATH}"
+list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS
+    "${UI_PATH}/dialog"
+    "${UI_PATH}/widget"
 )
-list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS "${UI_PATH}")
-file(GLOB_RECURSE INCLUDE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/*")
-# file(GLOB_RECURSE INCLUDE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
-file(GLOB_RECURSE SOURCES_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-file(GLOB UI_FILES "${UI_PATH}/*.ui")
+
+include_directories(
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${INCLUDE_PATH}"
+    "${INCLUDE_PATH}/dialog"
+    "${INCLUDE_PATH}/widget"
+    "${INCLUDE_PATH}/model"
+    "${INCLUDE_PATH}/object"
+)
+
+file(GLOB_RECURSE ISU_FILES
+    "${INCLUDE_PATH}/*.hpp"
+    "${INCLUDE_PATH}/*.h"
+    "${SRC_PATH}/*.cpp"
+    "${SRC_PATH}/*.c"
+    "${UI_PATH}/*.ui"
+)
+# file(GLOB_RECURSE SOURCES_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+# file(GLOB UI_FILES "${UI_PATH}/*.ui")
 
 set(PROJECT_SOURCES
-        # ${INCLUDE_FILES}
-        main.cpp
+        ${ISU_FILES}
+        _res.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        serialport.h serialport.cpp
-        serialportmanager.h serialportmanager.cpp
-        controlwidget.h controlwidget.cpp controlwidget.ui
-        comrangedialog.h comrangedialog.cpp comrangedialog.ui
-        mainwindow.h mainwindow.cpp
-        configurations.h
-        testruntime.hpp
+
+        # safetools.h safetools.cpp
+        # testruntime.hpp
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET power_carrier APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -90,6 +101,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::SerialPort
+    Qt${QT_VERSION_MAJOR}::Sql
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

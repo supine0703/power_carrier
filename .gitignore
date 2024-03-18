@@ -58,6 +58,9 @@ dkms.conf
 /proj/keil_*/*.uvgui.*
 /proj/keil_*/*.uvopt
 /proj/proteus/*
+/proj/hex/*
 !/proj/keil_*/Objects/*.hex
 !/proj/proteus/*.pdsprj
+!/proj/hex/*.hex
 /qt/build*/
+/qt/Release

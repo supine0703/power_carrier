@@ -35,7 +35,7 @@
 
 // -------------------------------------
 
-#include <REG52.H>
+#include <STC89C5xRC.H>
 
 // ------- define for lcd1602 ----------
 
@@ -54,9 +54,11 @@
 #define BROADCAST_GROUP_END 0xff // 广播分组的尾地址
 #define BROADCAST_GROUP_LEN 0x10 // 广播分组的长度
 
-#define END_RECEIVE '$'        // 结束接受符号 0x36
-#define USE_INTERRUPT_RECEIVE // 使用中断方式接收
-#define USE_QUERY_TRANSMIT_B  // 使用查询方式发送一字节
+// #define USE_INTERRUPT_RECEIVE // 使用中断方式接收
+// #define USE_QUERY_TRANSMIT_B  // 使用查询方式发送一字节
+
+#define USE_QUERY_TRANSMIT // 使用查询方式发送
+#define USE_QUERY_RECEIVE  // 使用查询方式接收
 
 // -------------------------------------
 

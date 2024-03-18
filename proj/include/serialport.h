@@ -33,60 +33,77 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
-// ----------------------------------------------------------------------------
-
-/**
- * @def USE_QUERY_TRANSMIT_B: 定义后会编译 SP_QReceiveByte
- * @def USE_QUERY_TRANSMIT_D: 定义后会编译 SP_QReceiveStr 及之前
- * @def USE_QUERY_TRANSMIT_A_D: 定义后会编译 SP_QReceiveAD 及之前
- * @param addr 从机地址码
- * @param str 发送的字符串
- * @param wait 发送信息间隔等待时长
- * @return void
- */
+#ifdef USE_QUERY_TRANSMIT
 extern void SP_QTransmitByte(unsigned char byte);
-extern void SP_QTransmitStr(unsigned char* str, unsigned int wait);
-extern void SP_QTransmitAD(
-    unsigned char addr, unsigned char* str, unsigned int wait
+
+extern void SP_QTransmitData(
+    unsigned char* buf, unsigned char n, unsigned char cutT
 );
+#endif
 
-// ----------------------------------------------------------------------------
+#ifdef USE_QUERY_RECEIVE
+extern bit SP_QReceiveByte(unsigned char* buf, unsigned char t);
 
-/**
- * @def USE_INTERRUPT_RECEIVE: 定义后会编译 SP_IReceiveAD
- * @def USE_INTERRUPT_RECEIVE_A_D: 定义后会编译 SP_IReceiveAD
- * @param addr 从机地址码
- * @return 0: 不是串口接收允许中断; 成功建立信道; 关闭信道
- * @return 1: 接收有效信息
- * @return 0->1: 成功建立信道并收到有效信息
- * @return 1->0: 接收信息完毕 关闭信道
- */
-extern bit SP_IReceiveAD(
-    unsigned char addr, void (*func)(void), void (*answer)(void)
+extern unsigned char SP_QReceiveData(
+    unsigned char* buf, unsigned char waitT, unsigned char cutT
 );
+#endif
 
-// ----------------------------------------------------------------------------
+// 早期通用版
+// // ----------------------------------------------------------------------------
 
-/**
- * @def USE_QUERY_RECEIVER_D: 定义后会编译 SP_QReceiveD 双机(直接)通信
- * @def USE_QUERY_RECEIVER_A_D: 定义后会编译 SP_QReceiveAD 多机通信 及之前
- * @param addr 从机地址码
- * @param wait 接收信息等待响应时长
- * @param func 对接收到的信息进行处理的函数指针
- * @param answer 接收完所有信息后对主机应答的函数指针
- * @return 0: 对应地址的从机没有接收到信息
- * @return 1: 有接收信息
- */
-extern bit SP_QReceiveD(
-    void (*func)(void), void (*answer)(void), unsigned int wait
-); // 接收数据
-extern bit SP_QReceiveAD(
-    unsigned char addr,
-    void (*func)(void),
-    void (*answer)(void),
-    unsigned int wait
-); // 接收地址匹配后接收数据
+// /**
+//  * @def USE_QUERY_TRANSMIT_B: 定义后会编译 SP_QReceiveByte
+//  * @def USE_QUERY_TRANSMIT_D: 定义后会编译 SP_QReceiveStr 及之前
+//  * @def USE_QUERY_TRANSMIT_A_D: 定义后会编译 SP_QReceiveAD 及之前
+//  * @param addr 从机地址码
+//  * @param str 发送的字符串
+//  * @param wait 发送信息间隔等待时长
+//  * @return void
+//  */
+// extern void SP_QTransmitByte(unsigned char byte);
+// extern void SP_QTransmitStr(unsigned char* str, unsigned int wait);
+// extern void SP_QTransmitAD(
+//     unsigned char addr, unsigned char* str, unsigned int wait
+// );
 
-// ----------------------------------------------------------------------------
+// // ----------------------------------------------------------------------------
+
+// /**
+//  * @def USE_INTERRUPT_RECEIVE: 定义后会编译 SP_IReceiveAD
+//  * @def USE_INTERRUPT_RECEIVE_A_D: 定义后会编译 SP_IReceiveAD
+//  * @param addr 从机地址码
+//  * @return 0: 不是串口接收允许中断; 成功建立信道; 关闭信道
+//  * @return 1: 接收有效信息
+//  * @return 0->1: 成功建立信道并收到有效信息
+//  * @return 1->0: 接收信息完毕 关闭信道
+//  */
+// extern bit SP_IReceiveAD(
+//     unsigned char addr, void (*func)(void), void (*answer)(void)
+// );
+
+// // ----------------------------------------------------------------------------
+
+// /**
+//  * @def USE_QUERY_RECEIVER_D: 定义后会编译 SP_QReceiveD 双机(直接)通信
+//  * @def USE_QUERY_RECEIVER_A_D: 定义后会编译 SP_QReceiveAD 多机通信 及之前
+//  * @param addr 从机地址码
+//  * @param wait 接收信息等待响应时长
+//  * @param func 对接收到的信息进行处理的函数指针
+//  * @param answer 接收完所有信息后对主机应答的函数指针
+//  * @return 0: 对应地址的从机没有接收到信息
+//  * @return 1: 有接收信息
+//  */
+// extern bit SP_QReceiveD(
+//     void (*func)(void), void (*answer)(void), unsigned int wait
+// ); // 接收数据
+// extern bit SP_QReceiveAD(
+//     unsigned char addr,
+//     void (*func)(void),
+//     void (*answer)(void),
+//     unsigned int wait
+// ); // 接收地址匹配后接收数据
+
+// // ----------------------------------------------------------------------------
 
 #endif // COMMUNICATION_H

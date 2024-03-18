@@ -7,16 +7,26 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
-#define _NULL_  0x00 // 空
+#define _PC_ADDR_    '\xf0'
 
-#define _ACK_   0x01 // 收到 应答
-#define _NACK_  0x02 // 未收到
+#define _ACK_ADDR_   '\xf4'
+#define _REN_ADDR_   '\xf5'
+#define _CLOSE_ADDR_ '\xf6'
 
-#define _YES_   0x03 // 是 同意
-#define _NO_    0x04 // 否 拒绝
 
-#define _REN    0x80 // 要求重复刚才内容
-#define _HELLO  0x81 // 询问是否存在
-#define _STATUS 0x82 // 请求现在状态
+#define _NULL_WORD_ '\x00'
+#define _ACK_WORD_  '\x01'
+#define _REN_WORD_  '\x02'
+#define _ASK_WORD_  '\x03'
+#define _SSU_WORD_  '\x04' // slave state update
+#define _SNS_WORD_  '\x05' // slave no state
+#define _MORE_WORD_ '\x10'
+
+#define _US_WORD_   '\x11' // update state
+
+
+#define _ERR_CRC_REN_ '\x01'
+
+
 
 #endif // INSTRUCTIONS_H

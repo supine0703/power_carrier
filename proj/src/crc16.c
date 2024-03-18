@@ -51,18 +51,32 @@ unsigned char code crcTableL[] = {
 unsigned int CRC16_XMODEM(unsigned char* buf, unsigned char n)
 {
     unsigned char data t;
-    union {
+    union { // 在 51-c 数据中: 高位在低地址
         unsigned char c[2];
-        unsigned int x;
-    } data crc;
+        unsigned int x; // H:c[0] L:c[1]
+    } data crc; // 在 c++ 中: 高位在高地址
     crc.x = 0;
-    while (n != 0)
+    if (n)
     {
-        t = crc.c[0] ^ *buf;
-        crc.c[0] = crc.c[1] ^ crcTableH[t];
-        crc.c[1] = crcTableL[t];
-        n--;
-        buf++;
+        do
+        {
+            t = crc.c[0] ^ *buf;
+            crc.c[0] = crc.c[1] ^ crcTableH[t]; // 高位
+            crc.c[1] = crcTableL[t]; // 低位
+            buf++;
+        } while (--n);
     }
     return (crc.x);
+}
+
+unsigned char CRC16_ADD_XMODEM(unsigned char* buf, unsigned char n)
+{
+    *(unsigned int*)(buf + n) = CRC16_XMODEM(buf, n);
+    return n + 2;
+}
+
+bit CRC16_CHECK_XMODEM(unsigned char* buf, unsigned char n)
+{
+    n -= 2;
+    return *(unsigned int*)(buf + n) ==  CRC16_XMODEM(buf, n);
 }

@@ -59,6 +59,82 @@
 
 // ============================================================================
 
+#ifdef USE_QUERY_TRANSMIT
+void SP_QTransmitByte(uchar byte)
+{
+    SBUF = byte;
+    while (!TI)
+        ; // 判断是否发送成功(发送成功后TI会置1 需手动清0)
+    TI = 0;
+}
+
+void SP_QTransmitData(uchar* buf, uchar n, uchar cutT)
+{
+    uchar t;
+    if (n)
+        do
+        {
+            SP_QTransmitByte(*buf);
+            t = cutT;
+            if (t)
+                while (--t)
+                    ;
+            buf++;
+        } while (--n);
+}
+#endif
+
+#ifdef USE_QUERY_RECEIVE
+bit SP_QRWait(uchar t) // 12MHz (t*1000 + 11)us above 1ms
+{
+    uchar i;
+    if (RI)
+    {
+        RI = 0;
+        return 1;
+    }
+    while (t)
+    {
+        t--;
+        for (i = 124; i; --i)
+            if (RI)
+            {
+                RI = 0;
+                return 1;
+            }
+    }
+    return 0;
+}
+
+bit SP_QReceiveByte(uchar* buf, uchar t)
+{
+    if (SP_QRWait(t))
+    {
+        *buf = SBUF;
+        return 1;
+    }
+    return 0;
+}
+
+uchar SP_QReceiveData(uchar* buf, uchar waitT, uchar cutT)
+{
+    uchar count = 0;
+    if (SP_QReceiveByte(buf, waitT))
+    {
+        do
+        {
+            buf++;
+            count++;
+        } while (SP_QReceiveByte(buf, cutT));
+    }
+    return count;
+}
+#endif
+
+// 早期通用版
+/*
+// ============================================================================
+
 #if defined(USE_QUERY_TRANSMIT_B) || defined(USE_QUERY_TRANSMIT_D) ||          \
     defined(USE_QUERY_TRANSMIT_A_D)
 void SP_QTransmitByte(uchar byte)
@@ -71,7 +147,7 @@ void SP_QTransmitByte(uchar byte)
 #endif
 
 #if defined(USE_QUERY_TRANSMIT_D) || defined(USE_QUERY_TRANSMIT_A_D)
-void SP_QTWait(uint t) // 12MHz 1ms
+void SP_QTWait(uchar t) // 12MHz 1ms
 {
     uchar i;
     while (t--)
@@ -82,7 +158,7 @@ void SP_QTWait(uint t) // 12MHz 1ms
     }
 }
 
-void SP_QTransmitStr(uchar* str, uint wait)
+void SP_QTransmitStr(uchar* str, uchar wait)
 {
     while (*str)
     {
@@ -94,7 +170,7 @@ void SP_QTransmitStr(uchar* str, uint wait)
 #endif
 
 #ifdef USE_QUERY_TRANSMIT_A_D
-void SP_QTransmitAD(uchar addr, uchar* str, uint wait)
+void SP_QTransmitAD(uchar addr, uchar* str, uchar wait)
 {
     TB8 = 1; // 发送地址
     SP_QTransmitByte(addr);
@@ -108,7 +184,7 @@ void SP_QTransmitAD(uchar addr, uchar* str, uint wait)
 
 // ============================================================================
 
-#if defined(USE_INTERRUPT_RECEIVE) || defined(USE_INTERRUPT_RECEIVE_A_D)
+#ifdef USE_INTERRUPT_RECEIVE_A_D
 bit SP_IReceiveAD(uchar addr, void (*func)(void), void (*answer)(void))
 { // 中断方式进行按地址接收
     if (RI)
@@ -202,3 +278,4 @@ bit SP_QReceiveAD(
 #endif
 
 // ============================================================================
+*/
