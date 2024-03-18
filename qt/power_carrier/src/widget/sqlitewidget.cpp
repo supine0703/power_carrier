@@ -287,6 +287,7 @@ void SQLiteWidget::openTable(const QString& filePath)
     db.setDatabaseName(filePath);
     if (db.open())
     {
+        dbCount++;
         QSqlQuery sql(db);
         if (!sql.exec(QString("UPDATE slaves SET word = 255")))
             QMessageBox::critical(this, "错误", sql.lastError().text());
@@ -353,6 +354,9 @@ void SQLiteWidget::openTable(const QString& filePath)
         ui->tableView->setColumnHidden(tab->fieldIndex("memo"), true);
         */
 
+        dbCount--;
+        if (!dbCount)
+            db.close();
     }
     else
         QMessageBox::critical(this, "错误", db.lastError().text());
@@ -373,6 +377,7 @@ void SQLiteWidget::updateButtonList(int addr)
     auto db(QSqlDatabase::database(DB_CONNECT_2));
     if(db.open())
     {
+        dbCount++;
         QSqlQuery sql(db);
         if (!sql.exec(select.arg(addr)))
             QMessageBox::critical(this, "错误", sql.lastError().text());
@@ -396,7 +401,9 @@ void SQLiteWidget::updateButtonList(int addr)
                 ui->buttonsLayout->addWidget(b);
             }
         }
-        db.close();
+        dbCount--;
+        if (!dbCount)
+            db.close();
     }
     else
         QMessageBox::critical(this, "错误", "db:" + db.lastError().text());
@@ -407,8 +414,9 @@ void SQLiteWidget::updateSlaveState(quint8 addr, quint8 word)
 {
     // qDebug() << QString::number(addr, 16) << QString::number(word, 16);
     auto db(QSqlDatabase::database(DB_CONNECT_2));
-    if(db.open())
+    if (db.isOpen())
     {
+        dbCount++;
         QSqlQuery sql(db);
         if (!sql.exec(
                 QString("UPDATE slaves SET word = %2 WHERE addr = %1")
@@ -435,23 +443,27 @@ void SQLiteWidget::updateSlaveState(quint8 addr, quint8 word)
             QMessageBox::critical(
                 this, "错误",
                 tableModel->lastError().text()
-                );
+            );
             return;
         }
 
         ui->listTableView->selectRow(row);
 
-        db.close();
+        dbCount--;
+        if (!dbCount)
+            db.close();
     }
     else
         QMessageBox::critical(this, "错误", "db:" + db.lastError().text());
 }
+
 
 void SQLiteWidget::noSlaveState(quint8 addr, quint8 word)
 {
     auto db(QSqlDatabase::database(DB_CONNECT_2));
     if(db.open())
     {
+        dbCount++;
         QSqlQuery sql(db);
         if (!sql.exec(
                 QString("SELECT wtxt FROM keywords WHERE addr = %1 AND word = %2")
@@ -470,7 +482,9 @@ void SQLiteWidget::noSlaveState(quint8 addr, quint8 word)
                 sql.value("wtxt").toString()
             )
         );
-        db.close();
+        dbCount--;
+        if (!dbCount)
+            db.close();
     }
     else
         QMessageBox::critical(this, "错误", "db:" + db.lastError().text());
@@ -482,6 +496,7 @@ void power_carrier::SQLiteWidget::InsertASlaveInfo(QStringList base, QStringList
     auto db(QSqlDatabase::database(DB_CONNECT_2));
     if(db.open())
     {
+        dbCount++;
         QSqlQuery sql(db);
         auto runSql = [this, &sql](QString txt) {
             if (!sql.exec(txt)) {
@@ -520,7 +535,10 @@ void power_carrier::SQLiteWidget::InsertASlaveInfo(QStringList base, QStringList
             );
             return;
         }
-        db.close();
+
+        dbCount--;
+        if (!dbCount)
+            db.close();
     }
     else
         QMessageBox::critical(this, "错误", "db:" + db.lastError().text());
@@ -532,6 +550,7 @@ void SQLiteWidget::UpdateASlaveInfo(QStringList base, QStringList word, QStringL
     auto db(QSqlDatabase::database(DB_CONNECT_2));
     if(db.open())
     {
+        dbCount++;
         QSqlQuery sql(db);
         auto runSql = [this, &sql](QString txt) {
             if (!sql.exec(txt)) {
@@ -578,7 +597,9 @@ void SQLiteWidget::UpdateASlaveInfo(QStringList base, QStringList word, QStringL
 
         ui->listTableView->selectRow(row);
 
-        db.close();
+        dbCount--;
+        if (!dbCount)
+            db.close();
     }
     else
         QMessageBox::critical(this, "错误", "db:" + db.lastError().text());

@@ -8,7 +8,6 @@
 #include <QLabel>
 
 #include "configurations.h"
-#include "serialportworker.h"
 #include "serialportwidget.h"
 #include "sqlitewidget.h"
 

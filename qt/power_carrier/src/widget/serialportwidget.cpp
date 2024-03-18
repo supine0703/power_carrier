@@ -243,12 +243,15 @@ void SerialPortWidget::connectSPWorker()
 
     connect(spWorker, &SerialPortWorker::havenReceive,
             this, [this](bool channel, QByteArray bytes) {
-        ui->log2TextEdit->setTextColor(QColor(0, 85, 0));
-        ui->log2TextEdit->append(QString("[%1]:RX <- %2").arg(
-            QTime::currentTime().toString("HH:mm:ss:zzz"),
-            bytes.toHex(' ').trimmed().toUpper()
-        ));
-        if (channel) {
+        if (!ui->log2LookPushButton->isChecked()) {
+            ui->log2TextEdit->setTextColor(QColor(0, 85, 0));
+            ui->log2TextEdit->append(QString("[%1]:RX <- %2").arg(
+                QTime::currentTime().toString("HH:mm:ss:zzz"),
+                bytes.toHex(' ').trimmed().toUpper()
+            ));
+        }
+
+        if (!ui->log1LookPushButton->isChecked() && channel) {
             ui->log1TextEdit->setTextColor(QColor(0, 85, 0));
             ui->log1TextEdit->append(QString("[%1]:RX <- %2").arg(
                 QTime::currentTime().toString("HH:mm:ss:zzz"),
@@ -259,18 +262,22 @@ void SerialPortWidget::connectSPWorker()
 
     connect(spWorker, &SerialPortWorker::havenTransmit,
             this, [this](QByteArray bytes) {
-        ui->log1TextEdit->setTextColor(QColor(Qt::blue));
-        ui->log1TextEdit->append(
-            QString("[%1]:TX -> %2").arg(
+        if (!ui->log1LookPushButton->isChecked()) {
+            ui->log1TextEdit->setTextColor(QColor(Qt::blue));
+            ui->log1TextEdit->append(
+                QString("[%1]:TX -> %2").arg(
+                    QTime::currentTime().toString("HH:mm:ss:zzz"),
+                    bytes.toHex(' ').trimmed().toUpper()
+                )
+            );
+        }
+        if (!ui->log2LookPushButton->isChecked()) {
+            ui->log2TextEdit->setTextColor(QColor(Qt::blue));
+            ui->log2TextEdit->append(QString("[%1]:TX -> %2").arg(
                 QTime::currentTime().toString("HH:mm:ss:zzz"),
                 bytes.toHex(' ').trimmed().toUpper()
-            )
-        );
-        ui->log2TextEdit->setTextColor(QColor(Qt::blue));
-        ui->log2TextEdit->append(QString("[%1]:TX -> %2").arg(
-            QTime::currentTime().toString("HH:mm:ss:zzz"),
-            bytes.toHex(' ').trimmed().toUpper()
             ));
+        }
     });
 
     connect(spWorker, &SerialPortWorker::errorLog,
@@ -521,7 +528,6 @@ void SerialPortWidget::on_lockPushButton_clicked(bool lock)
 }
 
 
-
 void SerialPortWidget::on_log1SelectorPushButton_clicked(bool left)
 {
     SETTINGS().setValue(_LOG1_SELECTOR_, left);
@@ -545,16 +551,5 @@ void SerialPortWidget::on_log2LookPushButton_clicked(bool off)
     SETTINGS().setValue(_LOG2_EYES_STATE_, off);
     ui->log2LookPushButton->setText(eyesIcon(off));
 }
-
-void SerialPortWidget::on_log1ClearPushButton_clicked()
-{
-
-}
-
-void SerialPortWidget::on_log2ClearPushButton_clicked()
-{
-
-}
-
 
 

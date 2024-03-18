@@ -95,9 +95,6 @@ private slots:
     void on_log1LookPushButton_clicked(bool off);
     void on_log2LookPushButton_clicked(bool off);
 
-    void on_log1ClearPushButton_clicked();
-    void on_log2ClearPushButton_clicked();
-
 
 private:
     Ui::SerialPortWidget* ui;
@@ -116,7 +113,6 @@ private:
     bool multipleClicksConnect = false;
 
     bool logs1And2Visiable = true;
-
 
 private:
     static const QString hiddenName;

@@ -170,10 +170,10 @@ void Func(void) {}
 
 bit updateState(unsigned char word)
 {
-    if (word <= 9)
+    if (word <= 14)
     {
         LCD1602_WriteCmd(Move_Cursor_Row1_Col(9));
-        LCD1602_WriteData('0' + word);
+        LCD1602_WriteData('a' + word);
         return 1;
     }
     else

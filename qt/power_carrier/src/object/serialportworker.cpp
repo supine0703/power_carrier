@@ -122,6 +122,7 @@ void SerialPortWorker::addTransmitWaitList(QByteArray bytes)
     if (m_sp == nullptr || !m_sp->isOpen())
         emit spNotOpen();
     waitList.append(bytes);
+    emit havenTransmit(bytes);
     // qDebug() << "wait transmit:" << bytes.toHex(' ');
 }
 
@@ -132,8 +133,19 @@ void SerialPortWorker::addTransmitForSlaveStateUpdate(quint8 addr, quint8 word)
     bytes.append(_SSU_WORD_);
     bytes.append(addr);
     bytes.append(word);
+    for (int i = 0, end = waitList.length(); i < end; i++)
+    {
+        const auto& b(waitList.at(i));
+        if (b.at(0) == _SSU_WORD_ && b.at(1) == addr)
+        {
+            waitList.removeAt(i);
+            break;
+        }
+    }
     this->addTransmitWaitList(bytes);
+
     // emit slaveStateUpdate(bytes.at(1), bytes.at(2));
+    // qDebug() << waitList;
 }
 
 

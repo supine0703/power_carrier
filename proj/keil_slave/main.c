@@ -38,7 +38,7 @@ void main(void)
         Func();
 }
 
-void int_4() interrupt 4 using 3
+void int_4() interrupt 4
 {
     ES = 0; // 禁止串行中断，防止在发送数据器件突然发送中断
     if (RI)
@@ -60,7 +60,9 @@ bit receiveCheck(unsigned char* buf)
 void addrFunc(void)
 {
     unsigned char buf[10];
-    SP_QReceiveByte(buf, 0);
+    // SP_QReceiveByte(buf, 0);
+    buf[0] = SBUF;
+    RI = 0;
     switch (buf[0])
     {
     case _REN_ADDR_:
@@ -70,7 +72,7 @@ void addrFunc(void)
         SM2 = 0;
         buf[0] = _ACK_WORD_;
         buf[1] = THIS_ADDR;
-        SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 2), 0);
+        SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 2), 1);
         break;
     case _CLOSE_ADDR_:
         SM2 = 1;
@@ -88,8 +90,8 @@ void wordFunc(void)
         switch (buf[0])
         {
         case _US_WORD_:
-            buf[2] = updateState(buf[1]) ? buf[1] : 0xff;
-            buf[0] = _SSU_WORD_;
+            buf[0] = updateState(buf[1]) ? _SSU_WORD_ : _SNS_WORD_;
+            buf[2] = buf[1];
             buf[1] = THIS_ADDR;
             SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 3), 0);
             break;

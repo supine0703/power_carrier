@@ -79,6 +79,7 @@ private:
     QList<QPushButton*> buttonList;
     QString memo = "";
 
+    int dbCount = 0;
 
 signals:
     void slaveStateChange(quint8 ,quint8);
