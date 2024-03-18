@@ -33,21 +33,17 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
-#ifdef USE_QUERY_TRANSMIT
 extern void SP_QTransmitByte(unsigned char byte);
 
 extern void SP_QTransmitData(
     unsigned char* buf, unsigned char n, unsigned char cutT
 );
-#endif
 
-#ifdef USE_QUERY_RECEIVE
 extern bit SP_QReceiveByte(unsigned char* buf, unsigned char t);
 
 extern unsigned char SP_QReceiveData(
     unsigned char* buf, unsigned char waitT, unsigned char cutT
 );
-#endif
 
 // 早期通用版
 // // ----------------------------------------------------------------------------

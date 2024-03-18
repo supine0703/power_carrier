@@ -135,60 +135,60 @@ void main(void)
 
     while (1)
     {
-        // createChannel(_PC_ADDR_);
-        // if (channel)
-        // {
-        //     buf[0] = _ASK_WORD_;
-        //     SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 1), 0);
-        //     while (receiveCheck(buf) && buf[0] != _NULL_WORD_)
-        //     {
-        //         switch (buf[0])
-        //         {
-        //         case _SSU_WORD_:
-        //             // SP_QTransmitData(buf, 5, 0);
-        //             // continue;
-        //             if (!updateSlaveState(buf[1], buf[2], buf))
-        //             {
-        //                 buf[0] = _SSU_WORD_;
-        //                 buf[2] = 0xff;
-        //                 CRC16_ADD_XMODEM(buf, 3);
-        //             }
-        //             createChannel(_PC_ADDR_);
-        //             if (channel)
-        //             {
-        //                 SP_QTransmitData(buf, 5, 0);
-        //                 continue;
-        //             }
-        //             else
-        //                 channel = 0;
-        //             break;
-        //         case _ACK_WORD_:
-
-        //             break;
-        //         case _REN_WORD_:
-
-        //             break;
-        //         default:
-        //             break;
-        //         }
-        //         if (!channel)
-        //             break;
-        //         buf[0] = _ASK_WORD_;
-        //         SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 1), 0);
-        //     }
-        //     closeChannel();
-        // }
-        // else
+        createChannel(_PC_ADDR_);
+        if (channel)
         {
-            // 接收按键
-            key = KeyValue();
-            while (KEY_MATRIX != 0x0f)
-                ; // 松开按键后
-            if (key != 0xff)
+            buf[0] = _ASK_WORD_;
+            SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 1), 0);
+            while (receiveCheck(buf) && buf[0] != _NULL_WORD_)
             {
-                updateSlaveState((key >> 2) + 1, key, buf);
+                switch (buf[0])
+                {
+                case _SSU_WORD_:
+                    // SP_QTransmitData(buf, 5, 0);
+                    // continue;
+                    if (!updateSlaveState(buf[1], buf[2], buf))
+                    {
+                        buf[0] = _SSU_WORD_;
+                        buf[2] = 0xff;
+                        CRC16_ADD_XMODEM(buf, 3);
+                    }
+                    createChannel(_PC_ADDR_);
+                    if (channel)
+                    {
+                        SP_QTransmitData(buf, 5, 0);
+                        continue;
+                    }
+                    else
+                        channel = 0;
+                    break;
+                case _ACK_WORD_:
+
+                    break;
+                case _REN_WORD_:
+
+                    break;
+                default:
+                    break;
+                }
+                if (!channel)
+                    break;
+                buf[0] = _ASK_WORD_;
+                SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 1), 0);
             }
+            closeChannel();
         }
+        // else
+        // {
+        //     // 接收按键
+        //     key = KeyValue();
+        //     while (KEY_MATRIX != 0x0f)
+        //         ; // 松开按键后
+        //     if (key != 0xff)
+        //     {
+        //         updateSlaveState((key >> 2) + 1, key, buf);
+        //     }
+        // }
         // Delay1ms(5000);
     }
 }
