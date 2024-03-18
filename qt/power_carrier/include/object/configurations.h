@@ -9,7 +9,7 @@
 
 #define ICON_FONT Configurations::LoadIconFont
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class Configurations
 {
@@ -56,6 +56,6 @@ public:
 
 #define _MAIN_WIDGET_WIDTH_   "/widget/width"
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // CONFIGURATIONS_H

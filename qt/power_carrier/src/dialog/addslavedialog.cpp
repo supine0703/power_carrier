@@ -3,8 +3,6 @@
 
 #include <QMessageBox>
 
-PROJECT_USING_NAMESPACE;
-
 
 AddSlaveDialog::AddSlaveDialog(QWidget* parent)
     : QDialog(parent)
@@ -130,7 +128,7 @@ int AddSlaveDialog::exec(QStringList base, QStringList word, QStringList wtxt)
 
 void AddSlaveDialog::on_addrLineEdit_editingFinished()
 {
-    regex->setPattern("^[0-9a-eA-E][0-9a-fA-F]$");
+    regex->setPattern("^[0-9a-eA-E][0-9a-fA-F]?$");
     auto txt(ui->addrLineEdit->text());
     auto flg(regex->match(txt).hasMatch());
     ui->addrWarningLabel->setHidden(flg);
@@ -247,14 +245,14 @@ void AddSlaveDialog::on_resetPushButton_clicked()
 void AddSlaveDialog::on_spacePushButton_clicked()
 {
     ui->stateTableWidget->clearSelection();
-    // this->on_addrLineEdit_editingFinished();
-    // this->on_typeLineEdit_editingFinished();
-    // this->on_nameLineEdit_editingFinished();
-    // for (int c = ui->stateTableWidget->columnCount() - 1; c >= 0; c--)
-    //     for (int r = ui->stateTableWidget->rowCount() - 1; r > 0; r--)
-    //         this->on_stateTableWidget_itemChanged(
-    //             ui->stateTableWidget->item(r, c)
-    //         );
+    this->on_addrLineEdit_editingFinished();
+    this->on_typeLineEdit_editingFinished();
+    this->on_nameLineEdit_editingFinished();
+    for (int c = ui->stateTableWidget->columnCount() - 1; c >= 0; c--)
+        for (int r = ui->stateTableWidget->rowCount() - 1; r > 0; r--)
+            this->on_stateTableWidget_itemChanged(
+                ui->stateTableWidget->item(r, c)
+            );
 }
 
 
@@ -285,13 +283,18 @@ void AddSlaveDialog::on_delRowPushButton_clicked()
     {
         QMessageBox::warning(this, "警告", QString("不可删除，至少需要两项！"));
     }
-    else if (QMessageBox::question(
+    else if (
+        QMessageBox::question(
             this, "提示",
             QString("请确认是否删除：\n第%1行 %2 - %3").arg(row + 1).arg(
                 ui->stateTableWidget->item(row, 0)->text(),
                 ui->stateTableWidget->item(row, 1)->text()
             )
         ) == QMessageBox::Yes)
+    {
         ui->stateTableWidget->removeRow(row);
+        sure4s.remove(row * 2, 2);
+        on_spacePushButton_clicked();
+    }
 }
 

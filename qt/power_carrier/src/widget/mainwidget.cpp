@@ -12,9 +12,6 @@
 #include "sqlitewidget.h"
 
 
-PROJECT_USING_NAMESPACE;
-
-
 MainWidget::MainWidget(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::MainWidget)
@@ -33,7 +30,6 @@ MainWidget::MainWidget(QWidget* parent)
     setCentralWidget(sqlWidget);
     addLeftToolAndWidget(spWidget, QChar(0xe6c2), "开启/关闭 串口侧边栏");
 
-
     connect(sqlWidget, &SQLiteWidget::slaveStateChange,
             spWidget, &SerialPortWidget::slaveStateChange);
 
@@ -44,6 +40,8 @@ MainWidget::MainWidget(QWidget* parent)
             sqlWidget, &SQLiteWidget::noSlaveState);
 
     loadSettings();
+
+
 }
 
 MainWidget::~MainWidget()
@@ -117,7 +115,9 @@ void MainWidget::initTopTool()
 
 void MainWidget::loadSettings()
 {
-    auto leftToolIndex = SETTINGS().value(_LEFT_TOOL_INDEX_).toInt();
+    auto leftToolIndex =
+        SETTINGS_CONTAINS({_LEFT_TOOL_INDEX_}) ?
+        SETTINGS().value(_LEFT_TOOL_INDEX_).toInt() : -1;
     if (leftToolIndex != -1)
     {
         auto b = qobject_cast<QPushButton*>(

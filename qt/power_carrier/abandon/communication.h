@@ -3,7 +3,7 @@
 
 #include <QtTypes>
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class Communication
 {
@@ -16,6 +16,6 @@ private:
     quint8 addr;
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // COMMUNICATION_H

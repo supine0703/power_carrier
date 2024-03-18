@@ -6,7 +6,7 @@
 class QSerialPort;
 class QMutex;
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class SerialPortWorker : public QObject
 {
@@ -73,6 +73,6 @@ signals:
     void errorLog(QString);
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // SERIALPORTWORKER_H

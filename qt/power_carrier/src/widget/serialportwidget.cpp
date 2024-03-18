@@ -13,7 +13,6 @@
 #include <QTimer>
 #include <QTime>
 
-PROJECT_USING_NAMESPACE;
 
 const QString SerialPortWidget::hiddenName("> %1");
 

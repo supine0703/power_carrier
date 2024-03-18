@@ -1,6 +1,5 @@
 #include "sqltablemodel.h"
 
-PROJECT_USING_NAMESPACE;
 
 SqlTableModel::SqlTableModel(QObject* parent)
     : QSqlQueryModel{parent}

@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class SerialPortWidget;
 
@@ -33,6 +33,6 @@ private:
 signals:
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // MAINWINDOW_2_H

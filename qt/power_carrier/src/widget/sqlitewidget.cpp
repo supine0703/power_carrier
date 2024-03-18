@@ -60,9 +60,6 @@ END;\
 #define DB_CONNECT_2 "openDB"
 
 
-PROJECT_USING_NAMESPACE;
-
-
 SQLiteWidget::SQLiteWidget(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::SQLiteWidget)
@@ -195,7 +192,7 @@ void SQLiteWidget::loadSetting()
     if (SETTINGS_CONTAINS({_DB_LAST_OPEN_}))
     {
         auto filePath(SETTINGS().value(_DB_LAST_OPEN_).toString());
-        if (!filePath.isEmpty())
+        if (!filePath.isEmpty() && QFile(filePath).exists())
         {
             this->openTable(filePath);
         }
@@ -271,6 +268,7 @@ void SQLiteWidget::openSQLiteDB()
 
 void SQLiteWidget::openTable(const QString& filePath)
 {
+    SETTINGS().setValue(_DB_LAST_OPEN_, "");
     this->on_cancelPushButton_clicked();
     this->on_spaceSelPushButton_clicked();
 
@@ -290,7 +288,10 @@ void SQLiteWidget::openTable(const QString& filePath)
         dbCount++;
         QSqlQuery sql(db);
         if (!sql.exec(QString("UPDATE slaves SET word = 255")))
+        {
             QMessageBox::critical(this, "错误", sql.lastError().text());
+            return;
+        }
 
         tableModel->setQuery("SELECT * FROM slaves", db);
         if (tableModel->lastError().isValid())
@@ -491,7 +492,7 @@ void SQLiteWidget::noSlaveState(quint8 addr, quint8 word)
 }
 
 
-void power_carrier::SQLiteWidget::InsertASlaveInfo(QStringList base, QStringList word, QStringList wtxt)
+void SQLiteWidget::InsertASlaveInfo(QStringList base, QStringList word, QStringList wtxt)
 {
     auto db(QSqlDatabase::database(DB_CONNECT_2));
     if(db.open())

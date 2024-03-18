@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>iconfont/iconfont.ttf</file>
+        <file>img/AppIcon.ico</file>
+    </qresource>
+    <qresource prefix="/font">
+        <file>font_family/JetBrainsMono-Medium.ttf</file>
+        <file>font_family/YouSheYuFeiTeJianKangTi-2.ttf</file>
+    </qresource>
+</RCC>

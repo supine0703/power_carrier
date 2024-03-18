@@ -7,7 +7,7 @@ class QMutex;
 class QTimer;
 
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class SerialPortManager : public QObject
 {
@@ -47,6 +47,6 @@ signals:
     void availablePortsChanged();
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // SERIALPORTMANAGER_H

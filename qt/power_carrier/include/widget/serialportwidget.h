@@ -12,7 +12,7 @@ class SerialPortWidget;
 class QMessageBox;
 
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class ComList;
 class ComRangeDialog;
@@ -136,6 +136,6 @@ signals:
     void slaveStateUpdate(quint8, quint8);
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // SERIALPORTWIDGET_H

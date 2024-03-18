@@ -7,9 +7,6 @@
 #include <QThread>
 
 
-PROJECT_USING_NAMESPACE;
-
-
 const QString ComList::comX("COM%1");
 
 ComList::ComList(QObject* parent, QComboBox* comsBox)
@@ -88,7 +85,7 @@ void ComList::setComsBox(QComboBox* comsBox)
 }
 
 
-void power_carrier::ComList::setComPortNum(int num)
+void ComList::setComPortNum(int num)
 {
     this->comPortNum = num;
 }

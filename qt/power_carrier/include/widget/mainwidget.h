@@ -10,7 +10,7 @@ class MainWidget;
 class QStatusBar;
 
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class SerialPortWidget;
 class SQLiteWidget;
@@ -49,6 +49,6 @@ private:
     SQLiteWidget* sqlWidget;
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // MAINWIDGET_H

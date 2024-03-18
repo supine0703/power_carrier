@@ -3,7 +3,6 @@
 
 #include "configurations.h"
 
-PROJECT_USING_NAMESPACE;
 
 ComRangeDialog::ComRangeDialog(QWidget* parent, int upperLimit)
     : QDialog(parent)
@@ -54,7 +53,7 @@ int ComRangeDialog::comMax() const
 }
 
 
-void power_carrier::ComRangeDialog::ready() const
+void ComRangeDialog::ready() const
 {
     ui->minSpinBox->setValue(this->m_comMin);
     ui->maxSpinBox->setValue(this->m_comMax);

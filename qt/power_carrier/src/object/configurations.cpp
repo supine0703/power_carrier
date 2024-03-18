@@ -2,8 +2,6 @@
 
 #include <QFontDatabase>
 
-PROJECT_USING_NAMESPACE;
-
 
 QSettings &Configurations::GetSettings()
 {

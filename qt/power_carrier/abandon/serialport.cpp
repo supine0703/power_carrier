@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include <QMetaEnum>
 
-PROJECT_USING_NAMESPACE;
+
 
 SerialPort::SerialPort(QObject* parent) : QObject {parent}
 {

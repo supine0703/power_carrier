@@ -7,15 +7,15 @@
 #include "configurations.h"
 
 
-PROJECT_USING_NAMESPACE;
-
-
 NewDBFileDialog::NewDBFileDialog(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::NewDBFileDialog)
 {
     ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
+
+    if (!SETTINGS_CONTAINS({_DB_DEFAULT_PATH_}))
+        on_pushButton_2_clicked();
 }
 
 NewDBFileDialog::~NewDBFileDialog()
