@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QSerialPort>
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class SerialPort : public QObject
 {
@@ -46,6 +46,6 @@ signals:
     void receiveStr(QString);
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // SERIALPORT_H

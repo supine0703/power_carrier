@@ -7,7 +7,7 @@ namespace Ui {
 class NewDBFileDialog;
 }
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class NewDBFileDialog : public QDialog
 {
@@ -43,6 +43,6 @@ private:
     QString f;
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // NEWDBFILEDIALOG_H

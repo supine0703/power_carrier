@@ -13,7 +13,7 @@
 #include <QFrame>
 #include <QTableView>
 
-PROJECT_USING_NAMESPACE;
+
 
 MainWindow_2::MainWindow_2(QWidget* parent)
     : QMainWindow{parent}

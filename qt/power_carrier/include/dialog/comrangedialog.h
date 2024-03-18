@@ -7,7 +7,7 @@ namespace Ui {
 class ComRangeDialog;
 }
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class ComRangeDialog : public QDialog
 {
@@ -37,6 +37,6 @@ private slots:
 signals:
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // COMRANGEDIALOG_H

@@ -16,7 +16,7 @@
 #endif
 
 
-PROJECT_USING_NAMESPACE;
+
 
 
 const QString SerialPortManager::infoT("%1 (%2)");

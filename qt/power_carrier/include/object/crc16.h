@@ -3,7 +3,7 @@
 
 #include <QByteArray>
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class CRC16
 {
@@ -19,6 +19,6 @@ private:
     static quint16* t1021;
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // CRC16_H

@@ -3,7 +3,7 @@
 
 #include <QSqlQueryModel>
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class SqlTableModel : public QSqlQueryModel
 {
@@ -15,6 +15,6 @@ public:
     QVariant data(const QModelIndex& index, int role) const override;
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // SQLTABLEMODEL_H

@@ -12,7 +12,7 @@
 #include "sqlitewidget.h"
 
 
-PROJECT_USING_NAMESPACE;
+
 
 
 MainWidget::MainWidget(QWidget* parent)

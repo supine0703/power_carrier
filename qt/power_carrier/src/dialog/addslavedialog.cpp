@@ -3,7 +3,7 @@
 
 #include <QMessageBox>
 
-PROJECT_USING_NAMESPACE;
+
 
 
 AddSlaveDialog::AddSlaveDialog(QWidget* parent)

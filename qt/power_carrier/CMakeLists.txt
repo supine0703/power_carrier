@@ -27,14 +27,6 @@ set(GLOBAL_DEFINED
     DB_PATH="${FILES_PATH}/db"
 )
 
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
-set(PROJECT_NAMESPACE_DEFINED
-    PROJECT_NAMESPACE_NAME=${PROJECT_NAME}
-    PROJECT_BEGIN_NAMESPACE=namespace\ ${PROJECT_NAME}\ \{
-    PROJECT_USING_NAMESPACE=using\ namespace\ ${PROJECT_NAME}
-    PROJECT_END_NAMESPACE=\}
-)
-
 set(INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(UI_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ui")
@@ -44,7 +36,6 @@ list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS
 )
 
 include_directories(
-    "${CMAKE_CURRENT_SOURCE_DIR}"
     "${INCLUDE_PATH}"
     "${INCLUDE_PATH}/dialog"
     "${INCLUDE_PATH}/widget"
@@ -63,18 +54,15 @@ file(GLOB_RECURSE ISU_FILES
 # file(GLOB UI_FILES "${UI_PATH}/*.ui")
 
 set(PROJECT_SOURCES
-        ${ISU_FILES}
-        _res.qrc
+    ${ISU_FILES}
+    res/_res.qrc
+    res/_app.rc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-
-        # safetools.h safetools.cpp
-        # testruntime.hpp
-
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET power_carrier APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -96,7 +84,6 @@ endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     ${GLOBAL_DEFINED}
-    ${PROJECT_NAMESPACE_DEFINED}
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets

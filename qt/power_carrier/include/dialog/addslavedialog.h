@@ -9,7 +9,7 @@ class AddSlaveDialog;
 
 class QTableWidgetItem;
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class AddSlaveDialog : public QDialog
 {
@@ -70,6 +70,6 @@ signals:
     void updateInfo(QStringList, QStringList, QStringList);
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // ADDSLAVEDIALOG_H

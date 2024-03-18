@@ -12,23 +12,25 @@ int main(int argc, char* argv[])
     QString fontName = QString("%1,%2,%3").arg(
         QFontDatabase::applicationFontFamilies(
             QFontDatabase::addApplicationFont(
-                ":/icon/res/iconfont/iconfont.ttf"
+                ":/icon/iconfont/iconfont.ttf"
             )
         ).at(0),
         QFontDatabase::applicationFontFamilies(
             QFontDatabase::addApplicationFont(
-                ":/font/res/fonts/JetBrainsMono-Medium.ttf"
+                ":/font/font_family/JetBrainsMono-Medium.ttf"
             )
         ).at(0),
         QFontDatabase::applicationFontFamilies(
             QFontDatabase::addApplicationFont(
-                ":/font/res/fonts/YouSheYuFeiTeJianKangTi-2.ttf"
+                ":/font/font_family/YouSheYuFeiTeJianKangTi-2.ttf"
             )
         ).at(0)
     );
     QApplication::setFont(QFont(fontName, 13));
+    QApplication::setWindowIcon(QIcon(":/icon/img/AppIcon.ico"));
 
-    PROJECT_NAMESPACE_NAME::MainWidget w;
+    MainWidget w;
+    w.setWindowTitle("Power Carrier");
     w.show();
 
     return a.exec();

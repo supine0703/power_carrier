@@ -10,7 +10,7 @@
 #include "keywords.h"
 
 
-PROJECT_USING_NAMESPACE;
+
 
 
 SerialPortWorker::SerialPortWorker(QObject* parent)

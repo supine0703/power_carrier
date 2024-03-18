@@ -64,3 +64,4 @@ dkms.conf
 !/proj/hex/*.hex
 /qt/build*/
 /qt/Release
+*.7z

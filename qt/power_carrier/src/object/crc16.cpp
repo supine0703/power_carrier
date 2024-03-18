@@ -1,6 +1,6 @@
 #include "crc16.h"
 
-PROJECT_USING_NAMESPACE;
+
 
 CRC16::CRC16() {}
 

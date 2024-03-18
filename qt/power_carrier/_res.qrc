@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/icon">
-        <file>res/iconfont/iconfont.ttf</file>
-    </qresource>
-    <qresource prefix="/font">
-        <file>res/fonts/JetBrainsMono-Medium.ttf</file>
-        <file>res/fonts/YouSheYuFeiTeJianKangTi-2.ttf</file>
-    </qresource>
-</RCC>

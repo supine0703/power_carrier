@@ -13,7 +13,7 @@ class QDataWidgetMapper;
 class QItemSelectionModel;
 class QSortFilterProxyModel;
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class NewDBFileDialog;
 class AddSlaveDialog;
@@ -85,6 +85,6 @@ signals:
     void slaveStateChange(quint8 ,quint8);
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // SQLITEWIDGET_H

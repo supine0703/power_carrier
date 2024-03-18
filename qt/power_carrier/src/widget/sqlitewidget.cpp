@@ -60,7 +60,7 @@ END;\
 #define DB_CONNECT_2 "openDB"
 
 
-PROJECT_USING_NAMESPACE;
+
 
 
 SQLiteWidget::SQLiteWidget(QWidget* parent)
@@ -491,7 +491,7 @@ void SQLiteWidget::noSlaveState(quint8 addr, quint8 word)
 }
 
 
-void power_carrier::SQLiteWidget::InsertASlaveInfo(QStringList base, QStringList word, QStringList wtxt)
+void SQLiteWidget::InsertASlaveInfo(QStringList base, QStringList word, QStringList wtxt)
 {
     auto db(QSqlDatabase::database(DB_CONNECT_2));
     if(db.open())

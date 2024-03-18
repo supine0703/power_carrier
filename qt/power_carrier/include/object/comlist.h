@@ -8,7 +8,7 @@ class QThread;
 class QComboBox;
 
 
-PROJECT_BEGIN_NAMESPACE
+ 
 
 class SerialPortManager;
 
@@ -49,6 +49,6 @@ signals:
     void currentComChanged();
 };
 
-PROJECT_END_NAMESPACE
+ 
 
 #endif // COMLIST_H

@@ -7,7 +7,7 @@
 #include "configurations.h"
 
 
-PROJECT_USING_NAMESPACE;
+
 
 
 NewDBFileDialog::NewDBFileDialog(QWidget* parent)
