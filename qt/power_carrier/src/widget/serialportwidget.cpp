@@ -242,12 +242,23 @@ void SerialPortWidget::connectSPWorker()
 
     connect(spWorker, &SerialPortWorker::havenReceive,
             this, [this](bool channel, QByteArray bytes) {
+        QString mean;
+        if (ui->log2SelectorPushButton->isChecked() ||
+            ui->log1SelectorPushButton->isChecked()) {
+            if (!(mean = SerialPortWorker::getKeywordMeaning(bytes)).isEmpty()) {
+                mean = QString("|== %1 ==|").arg(mean);
+            }
+        }
+
         if (!ui->log2LookPushButton->isChecked()) {
             ui->log2TextEdit->setTextColor(QColor(0, 85, 0));
             ui->log2TextEdit->append(QString("[%1]:RX <- %2").arg(
                 QTime::currentTime().toString("HH:mm:ss:zzz"),
                 bytes.toHex(' ').trimmed().toUpper()
             ));
+            if (ui->log2SelectorPushButton->isChecked()) {
+                ui->log2TextEdit->append(mean);
+            }
         }
 
         if (!ui->log1LookPushButton->isChecked() && channel) {
@@ -256,19 +267,31 @@ void SerialPortWidget::connectSPWorker()
                 QTime::currentTime().toString("HH:mm:ss:zzz"),
                 bytes.toHex(' ').trimmed().toUpper()
             ));
+            if (ui->log1SelectorPushButton->isChecked()) {
+                ui->log1TextEdit->append(mean);
+            }
         }
     });
 
     connect(spWorker, &SerialPortWorker::havenTransmit,
             this, [this](QByteArray bytes) {
+        QString mean;
+        if (ui->log2SelectorPushButton->isChecked() ||
+            ui->log1SelectorPushButton->isChecked()) {
+            if (!(mean = SerialPortWorker::getKeywordMeaning(bytes)).isEmpty()) {
+                mean = QString("|== %1 ==|").arg(mean);
+            }
+        }
+
         if (!ui->log1LookPushButton->isChecked()) {
             ui->log1TextEdit->setTextColor(QColor(Qt::blue));
-            ui->log1TextEdit->append(
-                QString("[%1]:TX -> %2").arg(
+            ui->log1TextEdit->append(QString("[%1]:TX -> %2").arg(
                     QTime::currentTime().toString("HH:mm:ss:zzz"),
                     bytes.toHex(' ').trimmed().toUpper()
-                )
-            );
+            ));
+            if (ui->log1SelectorPushButton->isChecked()) {
+                ui->log1TextEdit->append(mean);
+            }
         }
         if (!ui->log2LookPushButton->isChecked()) {
             ui->log2TextEdit->setTextColor(QColor(Qt::blue));
@@ -276,6 +299,9 @@ void SerialPortWidget::connectSPWorker()
                 QTime::currentTime().toString("HH:mm:ss:zzz"),
                 bytes.toHex(' ').trimmed().toUpper()
             ));
+            if (ui->log2SelectorPushButton->isChecked()) {
+                ui->log2TextEdit->append(mean);
+            }
         }
     });
 
@@ -285,6 +311,17 @@ void SerialPortWidget::connectSPWorker()
         ui->log2TextEdit->append(QString("[%1]: %2").arg(
             QTime::currentTime().toString("HH:mm:ss:zzz"), str
         ));
+    });
+
+    connect(spWorker, &SerialPortWorker::waitListRemove,
+            this, &SerialPortWidget::waitListRemove);
+    connect(spWorker, &SerialPortWorker::waitListAppend,
+            this, [this](QByteArray bytes) {
+        emit this->waitListAppend(
+            QString("[%1]: %2").arg(
+                bytes.toHex(' '), SerialPortWorker::getKeywordMeaning(bytes)
+            )
+        );
     });
 }
 

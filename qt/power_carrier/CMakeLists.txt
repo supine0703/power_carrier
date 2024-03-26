@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(power_carrier VERSION 0.1 LANGUAGES CXX)
+project(power_carrier VERSION 0.2.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -22,6 +22,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 set(GLOBAL_DEFINED
+    THE_VESION="${PROJECT_VERSION}"
     SHARE_PATH="${FILES_PATH}/share"
     CONFIG_INI="${FILES_PATH}/share/config.ini"
     DB_PATH="${FILES_PATH}/db"
@@ -29,35 +30,40 @@ set(GLOBAL_DEFINED
 
 set(INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(RES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/res")
 set(UI_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ui")
+
+function(recurse_directories var root_dir)
+    if (IS_DIRECTORY ${root_dir})
+        set(${var} ${${var}} ${root_dir})
+
+        file(GLOB ALL_SUB RELATIVE ${root_dir} ${root_dir}/*)
+        foreach(sub ${ALL_SUB})
+            recurse_directories(${var} ${root_dir}/${sub})
+        endforeach()
+
+        set(${var} ${${var}} PARENT_SCOPE)
+    endif()
+endfunction()
+
+recurse_directories(UI_ALL_DIR ${UI_PATH})
+recurse_directories(INCLUDE_ALL_DIR ${INCLUDE_PATH})
+
 list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS
-    "${UI_PATH}/dialog"
-    "${UI_PATH}/widget"
+    "${UI_ALL_DIR}"
 )
 
 include_directories(
-    "${INCLUDE_PATH}"
-    "${INCLUDE_PATH}/dialog"
-    "${INCLUDE_PATH}/widget"
-    "${INCLUDE_PATH}/model"
-    "${INCLUDE_PATH}/object"
+    "${INCLUDE_ALL_DIR}"
 )
 
-file(GLOB_RECURSE ISU_FILES
-    "${INCLUDE_PATH}/*.hpp"
-    "${INCLUDE_PATH}/*.h"
-    "${SRC_PATH}/*.cpp"
-    "${SRC_PATH}/*.c"
+file(GLOB_RECURSE PROJECT_SOURCES
+    "${INCLUDE_PATH}/*.hpp" "${INCLUDE_PATH}/*.h"
+    "${SRC_PATH}/*.cpp" "${SRC_PATH}/*.c"
+    "${RES_PATH}/*.qrc" "${RES_PATH}/*.rc"
     "${UI_PATH}/*.ui"
 )
-# file(GLOB_RECURSE SOURCES_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-# file(GLOB UI_FILES "${UI_PATH}/*.ui")
 
-set(PROJECT_SOURCES
-    ${ISU_FILES}
-    res/_res.qrc
-    res/_app.rc
-)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}

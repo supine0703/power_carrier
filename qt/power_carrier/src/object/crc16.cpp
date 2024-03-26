@@ -4,7 +4,7 @@
 CRC16::CRC16() {}
 
 
-quint16 CRC16::XMODEM(QByteArray& bytes, int len)
+quint16 CRC16::XMODEM(const QByteArray& bytes, int len)
 {
     int end = (len <= 0) ? (bytes.length() + len) : (len);
     Q_ASSERT(end > 0);
@@ -24,7 +24,7 @@ quint16 CRC16::ADD_XMODEM(QByteArray& bytes)
 }
 
 
-bool CRC16::CHECK_XMODEM(QByteArray& bytes)
+bool CRC16::CHECK_XMODEM(const QByteArray& bytes)
 {
     auto len = bytes.length();
     quint16 crc16 = static_cast<quint8>(bytes.at(len - 2));

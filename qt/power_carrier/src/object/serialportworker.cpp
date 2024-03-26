@@ -119,7 +119,10 @@ void SerialPortWorker::addTransmitWaitList(QByteArray bytes)
     if (m_sp == nullptr || !m_sp->isOpen())
         emit spNotOpen();
     waitList.append(bytes);
-    emit havenTransmit(bytes);
+    QByteArray b = bytes;
+    CRC16::ADD_XMODEM(b);
+    emit waitListAppend(b);
+    // emit havenTransmit(bytes);
     // qDebug() << "wait transmit:" << bytes.toHex(' ');
 }
 
@@ -136,6 +139,7 @@ void SerialPortWorker::addTransmitForSlaveStateUpdate(quint8 addr, quint8 word)
         if (b.at(0) == _SSU_WORD_ && b.at(1) == addr)
         {
             waitList.removeAt(i);
+            emit waitListRemove(i);
             break;
         }
     }
@@ -192,6 +196,7 @@ void SerialPortWorker::receiveHostOrder()
                     } else {
                         b = waitList.at(0);
                         waitList.pop_front();
+                        emit waitListRemove(0);
                         transmit(b);
                     }
                     break;
@@ -225,7 +230,7 @@ void SerialPortWorker::receiveHostOrder()
         // qDebug() << "receive length: 2 --error!";
     else if (buf.isEmpty())
         emit errorLog("receive null!");
-        // qDebug() << "receive null";
+    // qDebug() << "receive null";
 }
 
 
@@ -237,3 +242,67 @@ T SerialPortWorker::getEnumValue(int index)
     return static_cast<T>(metaEnum.value(index));
 }
 
+
+QString SerialPortWorker::getKeywordMeaning(const QByteArray& bytes)
+{
+    if (bytes.length() == 1)
+    {
+        switch (bytes.at(0))
+        {
+        case _PC_ADDR_:
+            return "请求与PC建立信道";
+        case _ACK_ADDR_:
+            return "同意";
+        case _REN_ADDR_:
+            return "请求重新发送";
+        case _CLOSE_ADDR_:
+            return "关闭信道";
+        case _ACTION_:
+            return "HOST 开机";
+        default:
+            return QString("请求与地址为 %1H 的设备建立信道").arg(bytes.toHex());
+            break;
+        }
+    }
+    else if(bytes.length() > 2)
+    {
+        if (!CRC16::CHECK_XMODEM(bytes))
+            return "CRC 码出错";
+        switch (bytes.at(0))
+        {
+        case _ASK_WORD_:
+            return "询问是否有待处理的对话";
+        case _SSU_WORD_:
+            if (bytes.at(2) == '\xff')
+                return "更新从机未响应";
+            return "请求更新从机状态";
+        case _SNS_WORD_:
+            return "从机没有此状态";
+        case _NULL_WORD_:
+            return "否定/空";
+        case _ACK_WORD_:
+            return "应答/同意";
+        case _REN_WORD_:
+            if (bytes.length() > 3)
+            {
+                QString s;
+                switch (bytes.at(1))
+                {
+                case _ERR_CRC_REN_:
+                    s = "CRC 错误";
+                    break;
+                default:
+                    s = QString::number(bytes.at(1));
+                }
+                return QString("请求重新发送 原因: %1").arg(s);
+            }
+            else
+                return "请求重新发送";
+        case _US_WORD_:
+            return "要求从机更新状态";
+        default:
+            break;
+        }
+    }
+    return "unkonw";
+}

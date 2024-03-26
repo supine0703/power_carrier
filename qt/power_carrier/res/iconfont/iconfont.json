@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "22016082",
+      "name": "任务队列",
+      "font_class": "renwuduilie",
+      "unicode": "e667",
+      "unicode_decimal": 58983
+    },
+    {
+      "icon_id": "13992516",
+      "name": "信号",
+      "font_class": "xinhao",
+      "unicode": "e65e",
+      "unicode_decimal": 58974
+    },
+    {
       "icon_id": "34273114",
       "name": "新建文件",
       "font_class": "xinjianwenjian",

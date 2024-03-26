@@ -11,9 +11,6 @@ class SerialPortWidget;
 
 class QMessageBox;
 
-
- 
-
 class ComList;
 class ComRangeDialog;
 class SerialPortWorker;
@@ -134,8 +131,10 @@ signals:
     void slaveNoState(quint8, quint8);
     void slaveStateChange(quint8, quint8);
     void slaveStateUpdate(quint8, quint8);
+
+    void waitListRemove(int);
+    void waitListAppend(QString);
 };
 
- 
 
 #endif // SERIALPORTWIDGET_H

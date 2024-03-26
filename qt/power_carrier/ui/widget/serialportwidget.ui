@@ -686,7 +686,7 @@ QPushButton::pressed {
                </sizepolicy>
               </property>
               <property name="text">
-               <string>ASCII</string>
+               <string>HEX</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -717,7 +717,7 @@ QPushButton::pressed {
                <cursorShape>PointingHandCursor</cursorShape>
               </property>
               <property name="toolTip">
-               <string>选择通信内容显示ascii码或是16进制</string>
+               <string>选择通信内容显示: 仅16进制码 或 16进制码加注释</string>
               </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
@@ -750,7 +750,7 @@ QPushButton:checked {
                </sizepolicy>
               </property>
               <property name="text">
-               <string>HEX</string>
+               <string>ANNO</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -933,7 +933,7 @@ QPushButton::pressed {
                </sizepolicy>
               </property>
               <property name="text">
-               <string>ASCII</string>
+               <string>HEX</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -964,7 +964,7 @@ QPushButton::pressed {
                <cursorShape>PointingHandCursor</cursorShape>
               </property>
               <property name="toolTip">
-               <string>选择通信内容显示ascii码或是16进制</string>
+               <string>选择通信内容显示: 仅16进制码 或 16进制码加注释</string>
               </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
@@ -997,7 +997,7 @@ QPushButton:checked {
                </sizepolicy>
               </property>
               <property name="text">
-               <string>HEX</string>
+               <string>ANNO</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

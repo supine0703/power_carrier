@@ -10,6 +10,3 @@
 #define uchar unsigned char
 
 uchar baudRateT = 0xfd; // 波特率 9600bps
-
-unsigned char buff_arr[34];
-unsigned char buff_len = 0;

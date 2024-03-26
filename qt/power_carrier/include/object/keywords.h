@@ -1,6 +1,8 @@
 #ifndef KEYWORDS_H
 #define KEYWORDS_H
 
+#define _ACTION_     '\xfa'
+
 #define _PC_ADDR_    '\xf0'
 
 #define _ACK_ADDR_   '\xf4'
@@ -16,7 +18,7 @@
 #define _SNS_WORD_  '\x05' // slave no state
 #define _MORE_WORD_ '\x10'
 
-
+#define _US_WORD_   '\x11' // update state
 
 #define _ERR_CRC_REN_ '\x01'
 

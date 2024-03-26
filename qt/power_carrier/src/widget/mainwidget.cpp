@@ -1,6 +1,7 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 
+#include <QTableWidget>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QStatusBar>
@@ -10,6 +11,7 @@
 #include "configurations.h"
 #include "serialportwidget.h"
 #include "sqlitewidget.h"
+#include "waittablewidget.h"
 
 
 MainWidget::MainWidget(QWidget* parent)
@@ -18,8 +20,12 @@ MainWidget::MainWidget(QWidget* parent)
     , statusBar(new QStatusBar(this))
     , spWidget(new SerialPortWidget(this))
     , sqlWidget(new SQLiteWidget(this))
+    , wtWidget(new WaitTableWidget(this))
 {
     ui->setupUi(this);
+
+    setWindowTitle(QString("Power Carrier - v%1").arg(THE_VESION));
+
     ui->mainLayout->addWidget(statusBar);
     ui->leftToolLayout->setAlignment(Qt::AlignTop);
     ui->leftFuncLayout->setAlignment(Qt::AlignLeft);
@@ -29,6 +35,8 @@ MainWidget::MainWidget(QWidget* parent)
 
     setCentralWidget(sqlWidget);
     addLeftToolAndWidget(spWidget, QChar(0xe6c2), "开启/关闭 串口侧边栏");
+    addLeftToolAndWidget(wtWidget, QChar(0xe667), "开启/关闭 待处理指令队列");
+
 
     connect(sqlWidget, &SQLiteWidget::slaveStateChange,
             spWidget, &SerialPortWidget::slaveStateChange);
@@ -38,6 +46,12 @@ MainWidget::MainWidget(QWidget* parent)
 
     connect(spWidget, &SerialPortWidget::slaveNoState,
             sqlWidget, &SQLiteWidget::noSlaveState);
+
+    connect(spWidget, &SerialPortWidget::waitListAppend,
+            wtWidget, &WaitTableWidget::append);
+
+    connect(spWidget, &SerialPortWidget::waitListRemove,
+            wtWidget, &WaitTableWidget::remove);
 
     loadSettings();
 

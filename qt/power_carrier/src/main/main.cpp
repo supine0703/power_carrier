@@ -30,7 +30,6 @@ int main(int argc, char* argv[])
     QApplication::setWindowIcon(QIcon(":/icon/img/AppIcon.ico"));
 
     MainWidget w;
-    w.setWindowTitle("Power Carrier");
     w.show();
 
     return a.exec();

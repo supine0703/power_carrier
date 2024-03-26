@@ -7,6 +7,8 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
+#define _ACTION_     '\xfa'
+
 #define _PC_ADDR_    '\xf0'
 
 #define _ACK_ADDR_   '\xf4'

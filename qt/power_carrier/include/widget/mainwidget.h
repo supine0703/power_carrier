@@ -8,12 +8,9 @@ class MainWidget;
 }
 
 class QStatusBar;
-
-
- 
-
 class SerialPortWidget;
 class SQLiteWidget;
+class WaitTableWidget;
 
 
 class MainWidget : public QWidget
@@ -47,6 +44,7 @@ private:
 
     SerialPortWidget* spWidget;
     SQLiteWidget* sqlWidget;
+    WaitTableWidget* wtWidget;
 };
 
  

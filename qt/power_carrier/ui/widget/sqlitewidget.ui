@@ -388,6 +388,9 @@ QHeaderView {
              <property name="text">
               <string>XXXXXXXX</string>
              </property>
+             <property name="frame">
+              <bool>true</bool>
+             </property>
              <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>

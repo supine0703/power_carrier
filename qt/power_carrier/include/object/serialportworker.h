@@ -6,7 +6,6 @@
 class QSerialPort;
 class QMutex;
 
- 
 
 class SerialPortWorker : public QObject
 {
@@ -55,10 +54,14 @@ private:
 
     bool channelFlg = false;
 
+
 private:
     template<typename T>
     static T getEnumValue(int index);
 
+
+public:
+    static QString getKeywordMeaning(const QByteArray& bytes);
 
 signals:
     void openSuccess(bool);
@@ -71,6 +74,9 @@ signals:
     void slaveStateUpdate(quint8, quint8);
     void slaveNoState(quint8, quint8);
     void errorLog(QString);
+
+    void waitListRemove(int);
+    void waitListAppend(QByteArray);
 };
 
  
