@@ -5,7 +5,7 @@
 
 class QSerialPort;
 class QMutex;
-
+class QTimer;
 
 class SerialPortWorker : public QObject
 {
@@ -51,6 +51,7 @@ private:
     QSerialPort* m_sp;
     QString portName;
     QMutex* m_mutex;
+    QTimer* m_timer;
     QByteArrayList waitList;
 
     bool channelFlg = false;
@@ -63,6 +64,7 @@ private:
 
 public:
     static QString getKeywordMeaning(const QByteArray& bytes);
+    static bool theInfoIsKey(const QByteArray& bytes);
 
 signals:
     void openSuccess(bool);

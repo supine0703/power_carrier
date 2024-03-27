@@ -57,6 +57,121 @@ void init(void)
 bit pcChannel = 0;
 bit slaveChannel = 0;
 
+bit receiveCheckWithPC(unsigned char* buf);
+void closePCChannel();
+void createPCChannel();
+
+bit receiveCheckWithSlave(unsigned char* buf, unsigned char* len);
+void closeSlaveChannel();
+void resetSlaveChannel(unsigned char addr, unsigned char* buf);
+void createSlaveChannel(unsigned char addr);
+bit updateSlaveState(
+    unsigned char addr, unsigned char word, unsigned char* buf
+);
+/* ========================================================================== */
+
+unsigned char ask[3] = {_ASK_WORD_};
+
+void test();
+void communicationWithPC();
+
+void main(void)
+{
+    LCD1602_Action();
+    init();
+
+    // SP_Set_QTWait(Delay1ms);
+    CRC16_ADD_XMODEM(ask, 1);
+
+    SP_QTransmitByte(_ACTION_, WITH_PC);
+    Delay1ms(R_PC_CUT_TIME);
+
+    while (1)
+    {
+        communicationWithPC();
+        // test();
+    }
+}
+
+void communicationWithPC()
+{
+    bit flg;
+    unsigned char buf[16];
+    if (!pcChannel)
+        createPCChannel();
+    if (pcChannel)
+    {
+        SP_QTransmitData(ask, 3, WITH_PC);
+        while ((flg = receiveCheckWithPC(buf)) && buf[0] != _NULL_WORD_)
+        {
+            switch (buf[0])
+            {
+            case _SSU_WORD_:
+                // SP_QTransmitData(buf, 5, 0, WITH_PC);
+                // continue;
+                if (!updateSlaveState(buf[1], buf[2], buf))
+                {
+                    buf[0] = _SSU_WORD_;
+                    buf[2] = 0xff;
+                    CRC16_ADD_XMODEM(buf, 3);
+                }
+                if (pcChannel)
+                {
+                    SP_QTransmitData(buf, 5, WITH_PC);
+                    continue;
+                }
+                break;
+            case _ACK_WORD_:
+
+                break;
+            case _REN_WORD_:
+
+                break;
+            default:
+                break;
+            }
+            if (!pcChannel)
+                break;
+            SP_QTransmitData(ask, 3, WITH_PC);
+            // Delay1ms(1000);
+        }
+        if (!flg)
+            closePCChannel();
+        // Delay1ms(1000);
+    }
+}
+
+void test()
+{
+    unsigned char key, len;
+    unsigned char buf[10];
+
+    // createPCChannel();
+    // closePCChannel();
+    // 接收按键
+    key = KeyValue();
+    while (KEY_MATRIX != 0x0f)
+        ; // 松开按键后
+    if (key != 0xff)
+    {
+        if (!updateSlaveState(1, key, buf))
+        {
+            buf[0] = _SSU_WORD_;
+            buf[1] = 1;
+            buf[2] = 0xff;
+            len = CRC16_ADD_XMODEM(buf, 3);
+        }
+        SP_QTransmitData(buf, len, WITH_PC);
+        Delay1ms(R_PC_CUT_TIME);
+        // SP_QTransmitByte(key, WITH_PC);
+        // SP_QTransmitByte(key, WITH_SLAVE);
+    }
+}
+
+/* ========================================================================== */
+
+/* -------------------------------------------------------------------------- */
+
 bit receiveCheckWithPC(unsigned char* buf)
 { // 接收数据并检验真假
     unsigned char length =
@@ -87,6 +202,8 @@ void createPCChannel()
             closePCChannel();
     }
 }
+
+/* -------------------------------------------------------------------------- */
 
 bit receiveCheckWithSlave(unsigned char* buf, unsigned char* len)
 { // 接收数据并检验真假
@@ -125,7 +242,6 @@ void createSlaveChannel(unsigned char addr)
         closeSlaveChannel();
     SP_QTransmitByte(addr, WITH_SLAVE);
     slaveChannel = receiveCheckWithSlave(buf, 0);
-
     if (!slaveChannel)
         resetSlaveChannel(addr, buf);
     if (slaveChannel)
@@ -150,7 +266,7 @@ bit updateSlaveState(unsigned char addr, unsigned char word, unsigned char* buf)
     unsigned char rBuf[4];
     closePCChannel();
     SP_QTransmitByte(addr, WITH_PC);
-    Delay1ms(R_PC_CUT_TIME);
+    // Delay1ms(R_PC_CUT_TIME);
     createSlaveChannel(addr);
     if (slaveChannel)
     {
@@ -158,19 +274,18 @@ bit updateSlaveState(unsigned char addr, unsigned char word, unsigned char* buf)
         rBuf[1] = word;
         len = CRC16_ADD_XMODEM(rBuf, 2);
         SP_QTransmitData(rBuf, len, WITH_PC);
-        Delay1ms(R_PC_CUT_TIME);
         SP_QTransmitData(rBuf, len, WITH_SLAVE);
         if (!(flg = receiveCheckWithSlave(buf, &len)))
         {
             SP_QTransmitData(rBuf, len, WITH_SLAVE);
             flg = receiveCheckWithSlave(buf, &len);
         }
-        closeSlaveChannel();
         if (len)
         {
             SP_QTransmitData(buf, len, WITH_PC);
-            Delay1ms(R_PC_CUT_TIME);
+            // Delay1ms(R_PC_CUT_TIME);
         }
+        closeSlaveChannel();
     }
     else
     {
@@ -184,67 +299,9 @@ bit updateSlaveState(unsigned char addr, unsigned char word, unsigned char* buf)
     return flg;
 }
 
-void main(void)
-{
-    bit flg;
-    unsigned char buf[16];
-    unsigned char len;
-    // LCD1602_Action();
-    init();
+/* -------------------------------------------------------------------------- */
 
-    // SP_Set_QTWait(Delay1ms);
-
-    SP_QTransmitByte(_ACTION_, WITH_PC);
-    Delay1ms(R_PC_CUT_TIME);
-
-    while (1)
-    {
-        if (!pcChannel)
-            createPCChannel();
-        if (pcChannel)
-        {
-            buf[0] = _ASK_WORD_;
-            SP_QTransmitData(buf, len = CRC16_ADD_XMODEM(buf, 1), WITH_PC);
-            while ((flg = receiveCheckWithPC(buf)) && buf[0] != _NULL_WORD_)
-            {
-                switch (buf[0])
-                {
-                case _SSU_WORD_:
-                    // SP_QTransmitData(buf, 5, 0, WITH_PC);
-                    // continue;
-                    if (!updateSlaveState(buf[1], buf[2], buf))
-                    {
-                        buf[0] = _SSU_WORD_;
-                        buf[2] = 0xff;
-                        len = CRC16_ADD_XMODEM(buf, 3);
-                    }
-                    if (pcChannel)
-                    {
-                        SP_QTransmitData(buf, len, WITH_PC);
-                        Delay1ms(R_PC_CUT_TIME);
-                        continue;
-                    }
-                    break;
-                case _ACK_WORD_:
-
-                    break;
-                case _REN_WORD_:
-
-                    break;
-                default:
-                    break;
-                }
-                if (!pcChannel)
-                    break;
-                buf[0] = _ASK_WORD_;
-                SP_QTransmitData(buf, len = CRC16_ADD_XMODEM(buf, 1), WITH_PC);
-                Delay1ms(1000);
-            }
-            if (flg)
-                closePCChannel();
-        }
-    }
-}
+/* ========================================================================== */
 
 // void closeChannel()
 // {

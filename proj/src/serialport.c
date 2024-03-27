@@ -68,17 +68,12 @@ void SP_QTransmitByte(uchar byte)
     TI = 0;
 }
 
-void SP_QTransmitData(uchar* buf, uchar n, uchar cutT)
+void SP_QTransmitData(uchar* buf, uchar n)
 {
-    uchar t;
     if (n)
         do
         {
             SP_QTransmitByte(*buf);
-            t = cutT;
-            if (t)
-                while (--t)
-                    ;
             buf++;
         } while (--n);
 }

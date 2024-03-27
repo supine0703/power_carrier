@@ -1,4 +1,3 @@
-// #include "mainwindow_2.h"
 #include "mainwidget.h"
 
 #include <QApplication>
@@ -31,6 +30,7 @@ int main(int argc, char* argv[])
 
     MainWidget w;
     w.show();
+    w.adjustDisplay();
 
     return a.exec();
 }

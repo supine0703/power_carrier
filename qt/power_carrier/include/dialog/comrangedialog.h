@@ -7,8 +7,6 @@ namespace Ui {
 class ComRangeDialog;
 }
 
- 
-
 class ComRangeDialog : public QDialog
 {
     Q_OBJECT

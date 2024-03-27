@@ -3,7 +3,6 @@
 
 #include <QSqlQueryModel>
 
- 
 
 class SqlTableModel : public QSqlQueryModel
 {

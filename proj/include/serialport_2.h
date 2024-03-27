@@ -13,7 +13,7 @@ extern void SP_QTransmitData(unsigned char* buf, unsigned char n, bit second);
 extern bit SP_QReceiveByte(unsigned char* buf, unsigned int t, bit second);
 
 extern unsigned char SP_QReceiveData(
-    unsigned char* buf, unsigned int waitT, unsigned char cutT, bit second
+    unsigned char* buf, unsigned int waitT, unsigned int cutT, bit second
 );
 #endif
 

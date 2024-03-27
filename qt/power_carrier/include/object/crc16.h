@@ -3,8 +3,6 @@
 
 #include <QByteArray>
 
- 
-
 class CRC16
 {
 private:

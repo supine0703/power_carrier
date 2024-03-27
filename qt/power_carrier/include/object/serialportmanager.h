@@ -6,9 +6,6 @@
 class QMutex;
 class QTimer;
 
-
- 
-
 class SerialPortManager : public QObject
 {
     Q_OBJECT

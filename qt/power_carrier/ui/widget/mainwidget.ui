@@ -169,7 +169,10 @@ QStatusBar {
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="saveToolButton">
+       <widget class="QToolButton" name="closeToolButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>64</width>
@@ -183,7 +186,7 @@ QStatusBar {
          </size>
         </property>
         <property name="text">
-         <string>保存</string>
+         <string>关闭</string>
         </property>
         <property name="iconSize">
          <size>
@@ -197,7 +200,10 @@ QStatusBar {
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="saveAsToolButton">
+       <widget class="QToolButton" name="saveToolButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>64</width>

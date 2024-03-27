@@ -254,7 +254,6 @@ void SQLiteWidget::createSQLiteDB()
     }
 }
 
-
 void SQLiteWidget::openSQLiteDB()
 {
     auto filePath = QFileDialog::getOpenFileName(
@@ -263,6 +262,58 @@ void SQLiteWidget::openSQLiteDB()
     {
         this->openTable(filePath);
     }
+}
+
+void SQLiteWidget::saveSQLiteDB()
+{
+    QString filePath;
+    if ((filePath = SETTINGS().value(_DB_SAVE_PATH_).toString()).isEmpty())
+        filePath = QFileInfo(SETTINGS().value(_DB_DEFAULT_PATH_).toString()).path();
+
+    filePath = QFileDialog::getSaveFileName(
+        this, "保存数据库文件", filePath, "SQLite (*.db)");
+    if (!filePath.isEmpty())
+    {
+        QFileInfo fi(filePath);
+        SETTINGS().setValue(_DB_SAVE_PATH_, fi.path());
+        QFileInfo lfi(SETTINGS().value(_DB_LAST_OPEN_).toString());
+        // if ((lfi.filePath() == fi.filePath()) && QMessageBox::warning(
+        //     this, "警告", "文件已存在, 是否覆盖: '" + fi.fileName() + "'?",
+        //     (QMessageBox::Yes | QMessageBox::No)
+        // ) != QMessageBox::Yes)
+        //     return;
+        QFile in(lfi.filePath());
+        QFile out(filePath);
+        QByteArray buff;
+        if (in.open(QIODevice::ReadOnly))
+        {
+            buff = in.readAll();
+            in.close();
+        }
+        else
+            QMessageBox::critical(this, "错误", "读取文件打开失败:" + in.errorString());
+        if (out.open(QIODevice::WriteOnly))
+        {
+            out.write(buff);
+            out.close();
+            QMessageBox::information(this, "提示", "文件保存成功:\n" + out.fileName());
+        }
+        else
+            QMessageBox::critical(this, "错误", "写入文件打开失败:" + out.errorString());
+    }
+}
+
+void SQLiteWidget::closeSQLiteDB()
+{
+    if (QMessageBox::question(this, "确认", "是否关闭此数据库?") != QMessageBox::Yes)
+        return;
+    SETTINGS().setValue(_DB_LAST_OPEN_, "");
+    this->on_cancelPushButton_clicked();
+    this->on_spaceSelPushButton_clicked();
+    ui->listGroupBox->setEnabled(false);
+    tableModel->clear();
+    loadFormat = false;
+    emit havenClose();
 }
 
 
@@ -306,10 +357,9 @@ void SQLiteWidget::openTable(const QString& filePath)
         proxyModel->sort(0, Qt::AscendingOrder);
         ui->listTableView->horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
 
-        static bool havenLoad = false;
-        if (!havenLoad)
+        if (!loadFormat)
         {
-            havenLoad = true;
+            loadFormat = true;
             auto record = tableModel->record();
             tableModel->setHeaderData(record.indexOf("addr"), Qt::Horizontal, "地址");
             tableModel->setHeaderData(record.indexOf("type"), Qt::Horizontal, "类型");
@@ -358,6 +408,7 @@ void SQLiteWidget::openTable(const QString& filePath)
         dbCount--;
         if (!dbCount)
             db.close();
+        emit havenOpen();
     }
     else
         QMessageBox::critical(this, "错误", db.lastError().text());

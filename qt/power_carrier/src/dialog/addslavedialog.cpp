@@ -142,7 +142,7 @@ void AddSlaveDialog::on_addrLineEdit_editingFinished()
 
 void AddSlaveDialog::on_typeLineEdit_editingFinished()
 {
-    regex->setPattern("^[0-9a-zA-Z]{1,2}$");
+    regex->setPattern("^[0-9a-zA-Z_]{1,4}$");
     auto flg(regex->match(ui->typeLineEdit->text()).hasMatch());
     ui->typeWarningLabel->setHidden(flg);
     ui->typeLineEdit->setStyleSheet(flg ? "" : "color:red;");
@@ -153,7 +153,7 @@ void AddSlaveDialog::on_typeLineEdit_editingFinished()
 
 void AddSlaveDialog::on_nameLineEdit_editingFinished()
 {
-    regex->setPattern("^[0-9a-zA-Z]{1,8}$");
+    regex->setPattern("^[0-9a-zA-Z_]{1,8}$");
     auto flg(regex->match(ui->nameLineEdit->text()).hasMatch());
     ui->nameWarningLabel->setHidden(flg);
     ui->nameLineEdit->setStyleSheet(flg ? "" : "color:red;");

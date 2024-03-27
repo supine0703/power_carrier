@@ -8,7 +8,6 @@ namespace Ui {
 class SerialPortWidget;
 }
 
-
 class QMessageBox;
 
 class ComList;
@@ -86,11 +85,15 @@ private slots:
     void on_lockPushButton_clicked(bool lock);
 
 
-    void on_log1SelectorPushButton_clicked(bool left);
-    void on_log2SelectorPushButton_clicked(bool left);
+    void on_log1SelectorPushButton_1_clicked(bool right);
+    void on_log2SelectorPushButton_1_clicked(bool right);
+    void on_log1SelectorPushButton_2_clicked(bool on);
+    void on_log2SelectorPushButton_2_clicked(bool on);
 
-    void on_log1LookPushButton_clicked(bool off);
-    void on_log2LookPushButton_clicked(bool off);
+    void on_log1UnLookPushButton_clicked(bool off);
+    void on_log2UnLookPushButton_clicked(bool off);
+
+
 
 
 private:

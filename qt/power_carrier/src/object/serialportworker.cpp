@@ -3,6 +3,7 @@
 #include <QSerialPort>
 #include <QMetaEnum>
 #include <QMutex>
+#include <QTimer>
 
 #include "configurations.h"
 #include "crc16.h"
@@ -13,6 +14,7 @@
 SerialPortWorker::SerialPortWorker(QObject* parent)
     : QObject{parent}
     , m_mutex(new QMutex)
+    , m_timer(nullptr)
     , m_sp(nullptr)
 {}
 
@@ -101,9 +103,17 @@ void SerialPortWorker::SafeNewSerialPort()
         {
             // qDebug() << "sub thread id:" << QThread::currentThreadId();
             m_sp = new QSerialPort(this);
-            m_sp->setReadBufferSize(10);
+            // m_sp->setReadBufferSize(10);
             connect(m_sp, &QSerialPort::readyRead,
                     this, &SerialPortWorker::receiveHostOrder);
+            m_timer = new QTimer(this);
+            connect(m_timer, &QTimer::timeout, this, [this]() {
+                m_timer->stop();
+                if (channelFlg) {
+                    channelFlg = false;
+                    emit errorLog("信道10秒无操作，自动关闭");
+                }
+            });
         }
         m_mutex->unlock();
     }
@@ -121,6 +131,8 @@ void SerialPortWorker::transmit(QByteArray& bytes)
 
 void SerialPortWorker::addTransmitWaitList(QByteArray bytes)
 {
+    if (bytes.isEmpty())
+        return;
     if (m_sp == nullptr || !m_sp->isOpen())
         emit spNotOpen();
     waitList.append(bytes);
@@ -163,6 +175,12 @@ void SerialPortWorker::receiveHostOrder()
     
     emit havenReceive(channelFlg, buf);
 
+    if (channelFlg)
+    {
+        m_timer->setInterval(10000);
+        m_timer->start();
+    }
+
     if (buf.length() == 1)
     {
         switch (buf.at(0))
@@ -175,11 +193,11 @@ void SerialPortWorker::receiveHostOrder()
             buf.clear();
             buf.append(_ACK_WORD_);
             buf.append(_PC_ADDR_);
-            CRC16::ADD_XMODEM(buf);
-            m_sp->write(buf);
+            transmit(buf);
             break;
         case _CLOSE_ADDR_:
             channelFlg = false;
+            m_timer->stop();
             break;
         default:
             // qDebug() << "unknow addr word:" << buf.toHex();
@@ -225,7 +243,7 @@ void SerialPortWorker::receiveHostOrder()
                 QByteArray b;
                 b.append(_REN_WORD_);
                 b.append(_ERR_CRC_REN_);
-                this->transmit(b);
+                transmit(b);
                 emit errorLog("crc error!");
                 // qDebug() << "crc error!";
             }
@@ -311,4 +329,39 @@ QString SerialPortWorker::getKeywordMeaning(const QByteArray& bytes)
         }
     }
     return "unkonw";
+}
+
+bool SerialPortWorker::theInfoIsKey(const QByteArray& bytes)
+{
+    if (bytes.length() < 2)
+    {
+        if (bytes.at(0) == _ACTION_)
+            return true;
+    }
+    else if (bytes.length() == 2)
+        return true;
+    else if (!CRC16::CHECK_XMODEM(bytes))
+        return true;
+    switch (bytes.at(0))
+    {
+    case _SSU_WORD_:
+        return true;
+    case _SNS_WORD_:
+        return true;
+    case _REN_WORD_:
+        if (bytes.length() > 3)
+        {
+            switch (bytes.at(1))
+            {
+            case _ERR_CRC_REN_:
+                return true;
+            default:
+                break;
+            }
+        }
+        break;
+    default:
+        break;
+    }
+    return false;
 }

@@ -77,6 +77,8 @@ unsigned char CRC16_ADD_XMODEM(unsigned char* buf, unsigned char n)
 
 bit CRC16_CHECK_XMODEM(unsigned char* buf, unsigned char n)
 {
+    if (n < 2)
+        return 0;
     n -= 2;
     return *(unsigned int*)(buf + n) ==  CRC16_XMODEM(buf, n);
 }

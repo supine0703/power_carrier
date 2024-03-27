@@ -6,6 +6,69 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "35067099",
+      "name": "数据库表",
+      "font_class": "shujukubiao",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "36770415",
+      "name": "数据库表",
+      "font_class": "shujukubiao1",
+      "unicode": "e7ac",
+      "unicode_decimal": 59308
+    },
+    {
+      "icon_id": "9618911",
+      "name": "打开数据库连接",
+      "font_class": "dakaishujukulianjie",
+      "unicode": "e85e",
+      "unicode_decimal": 59486
+    },
+    {
+      "icon_id": "9618909",
+      "name": "关闭数据库连接",
+      "font_class": "guanbishujukulianjie",
+      "unicode": "e85d",
+      "unicode_decimal": 59485
+    },
+    {
+      "icon_id": "15484642",
+      "name": "新建数据库",
+      "font_class": "xinjianshujuku",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "20226430",
+      "name": "清理",
+      "font_class": "qingli",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "7335421",
+      "name": "任务详情",
+      "font_class": "renwuxiangqing",
+      "unicode": "eb17",
+      "unicode_decimal": 60183
+    },
+    {
+      "icon_id": "39608757",
+      "name": "任务中心",
+      "font_class": "renwuzhongxin",
+      "unicode": "e67c",
+      "unicode_decimal": 59004
+    },
+    {
+      "icon_id": "12974862",
+      "name": "任务",
+      "font_class": "renwu",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
       "icon_id": "22016082",
       "name": "任务队列",
       "font_class": "renwuduilie",

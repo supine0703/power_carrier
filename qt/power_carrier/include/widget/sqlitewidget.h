@@ -13,8 +13,6 @@ class QDataWidgetMapper;
 class QItemSelectionModel;
 class QSortFilterProxyModel;
 
- 
-
 class NewDBFileDialog;
 class AddSlaveDialog;
 class SqlTableModel;
@@ -32,6 +30,8 @@ public:
 public slots:
     void createSQLiteDB();
     void openSQLiteDB();
+    void saveSQLiteDB();
+    void closeSQLiteDB();
 
     void updateSlaveState(quint8 addr, quint8 word);
     void noSlaveState(quint8 addr, quint8 word);
@@ -80,9 +80,13 @@ private:
     QString memo = "";
 
     int dbCount = 0;
+    bool loadFormat = false;
 
 signals:
     void slaveStateChange(quint8 ,quint8);
+
+    void havenOpen();
+    void havenClose();
 };
 
  

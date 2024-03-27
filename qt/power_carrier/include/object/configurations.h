@@ -9,8 +9,6 @@
 
 #define ICON_FONT Configurations::LoadIconFont
 
- 
-
 class Configurations
 {
     Configurations() = delete;
@@ -38,8 +36,10 @@ public:
 #define _SERIAL_PORT_SBI_     "/serial_port_info/stop_bits_index"
 #define _SERIAL_PORT_PI_      "/serial_port_info/parity_index"
 #define _SERIAL_PORT_LOCK_    "/serial_port_info/lock"
-#define _LOG1_SELECTOR_       "/log_settings/log1_selector"
-#define _LOG2_SELECTOR_       "/log_settings/log2_selector"
+#define _LOG1_SELECTOR1_      "/log_settings/log1_selector1"
+#define _LOG2_SELECTOR1_      "/log_settings/log2_selector1"
+#define _LOG1_SELECTOR2_      "/log_settings/log1_selector2"
+#define _LOG2_SELECTOR2_      "/log_settings/log2_selector2"
 #define _LOG1_EYES_STATE_     "/log_settings/log1_eyes_state"
 #define _LOG2_EYES_STATE_     "/log_settings/log2_eyes_state"
 #define _GROUP1_HIDDEN_       "/group_settings/group1_hidden"
@@ -53,9 +53,9 @@ public:
 
 #define _DB_DEFAULT_PATH_     "/db_setting/default_path"
 #define _DB_LAST_OPEN_        "/db_setting/last_open"
+#define _DB_SAVE_PATH_        "/db_setting/save_path"
 
 #define _MAIN_WIDGET_WIDTH_   "/widget/width"
 
- 
 
 #endif // CONFIGURATIONS_H

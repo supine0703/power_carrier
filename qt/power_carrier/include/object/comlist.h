@@ -6,10 +6,6 @@
 
 class QThread;
 class QComboBox;
-
-
- 
-
 class SerialPortManager;
 
 class ComList : public QObject

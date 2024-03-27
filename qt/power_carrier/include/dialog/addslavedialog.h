@@ -9,7 +9,6 @@ class AddSlaveDialog;
 
 class QTableWidgetItem;
 
- 
 
 class AddSlaveDialog : public QDialog
 {

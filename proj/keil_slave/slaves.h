@@ -1,7 +1,7 @@
 #ifndef SLAVES_H
 #define SLAVES_H
 
-#define MODEL 3
+#define MODEL 1
 
 #include "__config__.h"
 
@@ -43,10 +43,10 @@ void FuncInit(void)
     LCD1602_WriteCmd(Clear_Screen);         // 命令1
     LCD1602_WriteCmd(Move_Cursor_Row1_Col(6));
     num = MODEL >> 4;
-    num += num >= 10 ? 55 : 48;
+    num += ((num >= 10) ? 55 : 48);
     LCD1602_WriteData(num);
     num = MODEL & 0x0f;
-    num += num >= 10 ? 55 : 48;
+    num += ((num >= 10) ? 55 : 48);
     LCD1602_WriteData(num);
     LCD1602_WriteData(':');
 }
@@ -61,10 +61,16 @@ bit updateState(unsigned char word)
         LCD1602_WriteData('0' + word);
         return 1;
     }
+    else if (word <= 35)
+    {
+        LCD1602_WriteCmd(Move_Cursor_Row1_Col(9));
+        LCD1602_WriteData(55 + word);
+        return 1;
+    }
     else
     {
         LCD1602_WriteCmd(Move_Cursor_Row1_Col(9));
-        LCD1602_WriteData('N');
+        LCD1602_WriteData('!');
         return 0;
     }
 }

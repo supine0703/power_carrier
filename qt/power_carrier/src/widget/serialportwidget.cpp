@@ -37,7 +37,7 @@ SerialPortWidget::SerialPortWidget(QWidget* parent)
 
     connect(ui->comPortComboBox, &QComboBox::currentIndexChanged, this,
             [this](int index) {
-        emit selectComChanged(index + 1);
+        emit selectComChanged(index + crDialog->comMin());
     });
 
     connect(comList, &ComList::currentComChanged, this, [this]() {
@@ -132,19 +132,26 @@ void SerialPortWidget::loadSetting()
     ui->lockPushButton->setChecked(lock);
     this->on_lockPushButton_clicked(lock);
 
-    auto log1s = SETTINGS().value(_LOG1_SELECTOR_).toBool();
-    ui->log1SelectorPushButton->setChecked(log1s);
-    this->on_log1SelectorPushButton_clicked(log1s);
-    auto log2s = SETTINGS().value(_LOG2_SELECTOR_).toBool();
-    ui->log2SelectorPushButton->setChecked(log2s);
-    this->on_log2SelectorPushButton_clicked(log2s);
+    auto log1s1 = SETTINGS().value(_LOG1_SELECTOR1_).toBool();
+    ui->log1SelectorPushButton_1->setChecked(log1s1);
+    this->on_log1SelectorPushButton_1_clicked(log1s1);
+    auto log2s1 = SETTINGS().value(_LOG2_SELECTOR1_).toBool();
+    ui->log2SelectorPushButton_1->setChecked(log2s1);
+    this->on_log2SelectorPushButton_1_clicked(log2s1);
+
+    auto log1s2 = SETTINGS().value(_LOG1_SELECTOR2_).toBool();
+    ui->log1SelectorPushButton_2->setChecked(log1s2);
+    this->on_log1SelectorPushButton_2_clicked(log1s2);
+    auto log2s2 = SETTINGS().value(_LOG2_SELECTOR2_).toBool();
+    ui->log2SelectorPushButton_2->setChecked(log2s2);
+    this->on_log2SelectorPushButton_2_clicked(log2s2);
 
     auto log1e = SETTINGS().value(_LOG1_EYES_STATE_).toBool();
-    ui->log1LookPushButton->setChecked(log1e);
-    this->on_log1LookPushButton_clicked(log1e);
+    ui->log1UnLookPushButton->setChecked(log1e);
+    this->on_log1UnLookPushButton_clicked(log1e);
     auto log2e = SETTINGS().value(_LOG2_EYES_STATE_).toBool();
-    ui->log2LookPushButton->setChecked(log2e);
-    this->on_log2LookPushButton_clicked(log2e);
+    ui->log2UnLookPushButton->setChecked(log2e);
+    this->on_log2UnLookPushButton_clicked(log2e);
 
     auto group1h = SETTINGS().value(_GROUP1_HIDDEN_).toBool();
     ui->hidePushButton_1->setChecked(group1h);
@@ -156,6 +163,9 @@ void SerialPortWidget::loadSetting()
     ui->hidePushButton_3->setChecked(group3h);
     this->on_hidePushButton_3_clicked(group3h);
     this->logs1And2Visiable = !group2h && !group3h;
+
+    ui->log1ClearPushButton->setText(QChar(0xe62c));
+    ui->log2ClearPushButton->setText(QChar(0xe62c));
 
     emit reSetSerialPort(
         ui->baudRateComboBox->currentIndex(),
@@ -242,66 +252,101 @@ void SerialPortWidget::connectSPWorker()
 
     connect(spWorker, &SerialPortWorker::havenReceive,
             this, [this](bool channel, QByteArray bytes) {
+        bool l1Look = !ui->log1UnLookPushButton->isChecked();
+        bool l2Look = !ui->log2UnLookPushButton->isChecked();
+        if (!(l1Look || l2Look)) {
+            return;
+        }
+
+        bool l1IsK = ui->log1SelectorPushButton_2->isChecked();
+        bool l2IsK = ui->log2SelectorPushButton_2->isChecked();
+        bool isKey = SerialPortWorker::theInfoIsKey(bytes);
+        bool l1Show = l1Look && (isKey || !l1IsK);
+        bool l2Show = l2Look && (isKey || !l2IsK);
+        if (!(l1Show || l2Show)) {
+            return;
+        }
+
+        bool l1Mean = ui->log1SelectorPushButton_1->isChecked();
+        bool l2Mean = ui->log2SelectorPushButton_1->isChecked();
         QString mean;
-        if (ui->log2SelectorPushButton->isChecked() ||
-            ui->log1SelectorPushButton->isChecked()) {
-            if (!(mean = SerialPortWorker::getKeywordMeaning(bytes)).isEmpty()) {
+        if (l1Mean || l2Mean) {
+            mean = SerialPortWorker::getKeywordMeaning(bytes);
+            if (!mean.isEmpty()) {
                 mean = QString("|== %1 ==|").arg(mean);
             }
         }
 
-        if (!ui->log2LookPushButton->isChecked()) {
-            ui->log2TextEdit->setTextColor(
-                spWorker->isChannel() ? QColor(0, 85, 0) :
-                    QColor(Qt::darkMagenta));
-            ui->log2TextEdit->append(QString("[%1]:RX <- %2").arg(
-                QTime::currentTime().toString("HH:mm:ss:zzz"),
-                bytes.toHex(' ').trimmed().toUpper()
-            ));
-            if (ui->log2SelectorPushButton->isChecked()) {
-                ui->log2TextEdit->append(mean);
+        QColor color(0, 85, 0);
+        QString str(QString("[%1]:RX <- %2").arg(
+            QTime::currentTime().toString("HH:mm:ss:zzz"),
+            bytes.toHex(' ').trimmed().toUpper()
+        ));
+
+        if (l1Show) {
+            ui->log1TextEdit->setTextColor(color);
+            ui->log1TextEdit->append(str);
+            if (l1Mean) {
+                ui->log1TextEdit->append(mean);
             }
         }
 
-        if (!ui->log1LookPushButton->isChecked() && channel) {
-            ui->log1TextEdit->setTextColor(QColor(0, 85, 0));
-            ui->log1TextEdit->append(QString("[%1]:RX <- %2").arg(
-                QTime::currentTime().toString("HH:mm:ss:zzz"),
-                bytes.toHex(' ').trimmed().toUpper()
-            ));
-            if (ui->log1SelectorPushButton->isChecked()) {
-                ui->log1TextEdit->append(mean);
+        if (l2Show) {
+            ui->log2TextEdit->setTextColor(
+                channel ? color : QColor(Qt::darkMagenta)
+            );
+            ui->log2TextEdit->append(str);
+            if (l2Mean) {
+                ui->log2TextEdit->append(mean);
             }
         }
     });
 
     connect(spWorker, &SerialPortWorker::havenTransmit,
             this, [this](QByteArray bytes) {
+        bool l1Look = !ui->log1UnLookPushButton->isChecked();
+        bool l2Look = !ui->log2UnLookPushButton->isChecked();
+        if (!(l1Look || l2Look)) {
+            return;
+        }
+
+        bool l1IsK = ui->log1SelectorPushButton_2->isChecked();
+        bool l2IsK = ui->log2SelectorPushButton_2->isChecked();
+        bool isKey = SerialPortWorker::theInfoIsKey(bytes);
+        bool l1Show = (l1Look && (isKey || !l1IsK));
+        bool l2Show = (l2Look && (isKey || !l2IsK));
+        if (!(l1Show || l2Show)) {
+            return;
+        }
+
+        bool l1Mean = ui->log1SelectorPushButton_1->isChecked();
+        bool l2Mean = ui->log2SelectorPushButton_1->isChecked();
         QString mean;
-        if (ui->log2SelectorPushButton->isChecked() ||
-            ui->log1SelectorPushButton->isChecked()) {
-            if (!(mean = SerialPortWorker::getKeywordMeaning(bytes)).isEmpty()) {
+        if (l1Mean || l2Mean) {
+            mean = SerialPortWorker::getKeywordMeaning(bytes);
+            if (!mean.isEmpty()) {
                 mean = QString("|== %1 ==|").arg(mean);
             }
         }
 
-        if (!ui->log1LookPushButton->isChecked()) {
-            ui->log1TextEdit->setTextColor(QColor(Qt::blue));
-            ui->log1TextEdit->append(QString("[%1]:TX -> %2").arg(
-                    QTime::currentTime().toString("HH:mm:ss:zzz"),
-                    bytes.toHex(' ').trimmed().toUpper()
-            ));
-            if (ui->log1SelectorPushButton->isChecked()) {
+        QColor color(Qt::blue);
+        QString str(QString("[%1]:TX -> %2").arg(
+            QTime::currentTime().toString("HH:mm:ss:zzz"),
+            bytes.toHex(' ').trimmed().toUpper()
+        ));
+
+        if (l1Show) {
+            ui->log1TextEdit->setTextColor(color);
+            ui->log1TextEdit->append(str);
+            if (l1Mean) {
                 ui->log1TextEdit->append(mean);
             }
         }
-        if (!ui->log2LookPushButton->isChecked()) {
-            ui->log2TextEdit->setTextColor(QColor(Qt::blue));
-            ui->log2TextEdit->append(QString("[%1]:TX -> %2").arg(
-                QTime::currentTime().toString("HH:mm:ss:zzz"),
-                bytes.toHex(' ').trimmed().toUpper()
-            ));
-            if (ui->log2SelectorPushButton->isChecked()) {
+
+        if (l2Show) {
+            ui->log2TextEdit->setTextColor(color);
+            ui->log2TextEdit->append(str);
+            if (l2Mean) {
                 ui->log2TextEdit->append(mean);
             }
         }
@@ -309,10 +354,14 @@ void SerialPortWidget::connectSPWorker()
 
     connect(spWorker, &SerialPortWorker::errorLog,
             this, [this](QString str) {
-        ui->log2TextEdit->setTextColor(QColor(Qt::red));
-        ui->log2TextEdit->append(QString("[%1]: %2").arg(
+        auto color((QColor(Qt::red)));
+        auto s(QString("[%1]: %2").arg(
             QTime::currentTime().toString("HH:mm:ss:zzz"), str
         ));
+        ui->log2TextEdit->setTextColor(color);
+        ui->log2TextEdit->append(s);
+        ui->log1TextEdit->setTextColor(color);
+        ui->log1TextEdit->append(s);
     });
 
     connect(spWorker, &SerialPortWorker::waitListRemove,
@@ -566,28 +615,41 @@ void SerialPortWidget::on_lockPushButton_clicked(bool lock)
 }
 
 
-void SerialPortWidget::on_log1SelectorPushButton_clicked(bool left)
+void SerialPortWidget::on_log1SelectorPushButton_1_clicked(bool right)
 {
-    SETTINGS().setValue(_LOG1_SELECTOR_, left);
-    ui->log1SelectorPushButton->setText(selectorIcon(left));
+    SETTINGS().setValue(_LOG1_SELECTOR1_, right);
+    ui->log1SelectorPushButton_1->setText(selectorIcon(right));
 }
 
-void SerialPortWidget::on_log2SelectorPushButton_clicked(bool left)
+void SerialPortWidget::on_log2SelectorPushButton_1_clicked(bool right)
 {
-    SETTINGS().setValue(_LOG2_SELECTOR_, left);
-    ui->log2SelectorPushButton->setText(selectorIcon(left));
+    SETTINGS().setValue(_LOG2_SELECTOR1_, right);
+    ui->log2SelectorPushButton_1->setText(selectorIcon(right));
 }
 
-void SerialPortWidget::on_log1LookPushButton_clicked(bool off)
+
+void SerialPortWidget::on_log1SelectorPushButton_2_clicked(bool on)
+{
+    SETTINGS().setValue(_LOG1_SELECTOR2_, on);
+    ui->log1SelectorPushButton_2->setText(selectorIcon(on));
+}
+
+void SerialPortWidget::on_log2SelectorPushButton_2_clicked(bool on)
+{
+    SETTINGS().setValue(_LOG2_SELECTOR2_, on);
+    ui->log2SelectorPushButton_2->setText(selectorIcon(on));
+}
+
+
+void SerialPortWidget::on_log1UnLookPushButton_clicked(bool off)
 {
     SETTINGS().setValue(_LOG1_EYES_STATE_, off);
-    ui->log1LookPushButton->setText(eyesIcon(off));
+    ui->log1UnLookPushButton->setText(eyesIcon(off));
 }
 
-void SerialPortWidget::on_log2LookPushButton_clicked(bool off)
+void SerialPortWidget::on_log2UnLookPushButton_clicked(bool off)
 {
     SETTINGS().setValue(_LOG2_EYES_STATE_, off);
-    ui->log2LookPushButton->setText(eyesIcon(off));
+    ui->log2UnLookPushButton->setText(eyesIcon(off));
 }
-
 

@@ -21,6 +21,7 @@ public:
     explicit MainWidget(QWidget* parent = nullptr);
     ~MainWidget();
 
+    void adjustDisplay();
 
 private:
     void initTopTool();

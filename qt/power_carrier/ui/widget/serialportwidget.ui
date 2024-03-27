@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>380</width>
-    <height>540</height>
+    <height>556</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -375,7 +375,7 @@ QPushButton::pressed {
 但是发送数据时校验位有用，如果需要发送9位数据必须利用0/1校验，否则接收端可能接收紊乱。</string>
              </property>
              <property name="currentIndex">
-              <number>3</number>
+              <number>0</number>
              </property>
              <item>
               <property name="text">
@@ -694,7 +694,7 @@ QPushButton::pressed {
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="log1SelectorPushButton">
+             <widget class="QPushButton" name="log1SelectorPushButton_1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -765,12 +765,57 @@ QPushButton:checked {
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="log1ClearPushButton">
+             <widget class="QPushButton" name="log1SelectorPushButton_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="toolTip">
-               <string>清空对话日志</string>
+               <string>选择通信内容显示: 全部内容 或 仅关键内容</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  font-size: 24px;
+  color: gray; 
+  margin-bottom: 2px;
+}
+
+QPushButton:checked {
+  color: rgb(255, 85, 0);
+}</string>
               </property>
               <property name="text">
-               <string>清空</string>
+               <string>选择器</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="log1KeyLabel">
+              <property name="text">
+               <string>KEY</string>
               </property>
              </widget>
             </item>
@@ -782,7 +827,42 @@ QPushButton:checked {
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="log1LookPushButton">
+             <widget class="QPushButton" name="log1ClearPushButton">
+              <property name="toolTip">
+               <string>清空对话日志</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  color: gray;
+  font-size: 28px;
+}
+
+QPushButton::hover {
+   color: rgb(0, 0, 255);
+}
+
+QPushButton::pressed {
+  color: rgb(85, 0, 255);
+  font-size: 30px;
+}</string>
+              </property>
+              <property name="text">
+               <string>清空</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="log1Line_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="log1UnLookPushButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -941,7 +1021,7 @@ QPushButton::pressed {
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="log2SelectorPushButton">
+             <widget class="QPushButton" name="log2SelectorPushButton_1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1012,12 +1092,57 @@ QPushButton:checked {
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="log2ClearPushButton">
+             <widget class="QPushButton" name="log2SelectorPushButton_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="toolTip">
-               <string>清空通信日志</string>
+               <string>选择通信内容显示: 全部内容 或 仅关键内容</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  font-size: 24px;
+  color: gray; 
+  margin-bottom: 2px;
+}
+
+QPushButton:checked {
+  color: rgb(255, 85, 0);
+}</string>
               </property>
               <property name="text">
-               <string>清空</string>
+               <string>选择器</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="log2Keyabel">
+              <property name="text">
+               <string>KEY</string>
               </property>
              </widget>
             </item>
@@ -1029,7 +1154,42 @@ QPushButton:checked {
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="log2LookPushButton">
+             <widget class="QPushButton" name="log2ClearPushButton">
+              <property name="toolTip">
+               <string>清空通信日志</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  color: gray;
+  font-size: 28px;
+}
+
+QPushButton::hover {
+   color: rgb(0, 0, 255);
+}
+
+QPushButton::pressed {
+  color: rgb(85, 0, 255);
+  font-size: 30px;
+}</string>
+              </property>
+              <property name="text">
+               <string>清空</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="log2Line_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="log2UnLookPushButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>

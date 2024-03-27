@@ -6,7 +6,9 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QPainter>
+#include <QScreen>
 #include <QLabel>
+#include <QFile>
 
 #include "configurations.h"
 #include "serialportwidget.h"
@@ -32,7 +34,6 @@ MainWidget::MainWidget(QWidget* parent)
 
     initTopTool();
 
-
     setCentralWidget(sqlWidget);
     addLeftToolAndWidget(spWidget, QChar(0xe6c2), "开启/关闭 串口侧边栏");
     addLeftToolAndWidget(wtWidget, QChar(0xe667), "开启/关闭 待处理指令队列");
@@ -53,6 +54,16 @@ MainWidget::MainWidget(QWidget* parent)
     connect(spWidget, &SerialPortWidget::waitListRemove,
             wtWidget, &WaitTableWidget::remove);
 
+    connect(sqlWidget, &SQLiteWidget::havenOpen, this, [this]() {
+        ui->saveToolButton->setEnabled(true);
+        ui->closeToolButton->setEnabled(true);
+    });
+
+    connect(sqlWidget, &SQLiteWidget::havenClose, this, [this]() {
+        ui->saveToolButton->setEnabled(false);
+        ui->closeToolButton->setEnabled(false);
+    });
+
     loadSettings();
 
 
@@ -61,6 +72,18 @@ MainWidget::MainWidget(QWidget* parent)
 MainWidget::~MainWidget()
 {
     delete ui;
+}
+
+void MainWidget::adjustDisplay()
+{
+    int sW = QApplication::primaryScreen()->size().width();
+    int sH = QApplication::primaryScreen()->size().height();
+    int w = this->width();
+    int h = this->height();
+    if (sW < w || sH < h)
+        this->move(1, 1);
+    else
+        this->move(((sW - w) >> 1), ((sH - h) * 0.4));
 }
 
 void MainWidget::initTopTool()
@@ -84,11 +107,11 @@ void MainWidget::initTopTool()
         fontToIcon(QChar(0xe615), 48, QColor(220, 0, 0, 255)),
         fontToIcon(QChar(0xe615), 48, QColor(85, 220, 0, 255)),
         fontToIcon(QChar(0xe615), 48, QColor(255, 170, 0, 255)),
-        fontToIcon(QChar(0xe657), 48, Qt::black),
-        fontToIcon(QChar(0xe603), 48, Qt::black),
-        fontToIcon(QChar(0xe604), 48, Qt::black),
-        fontToIcon(QChar(0xe632), 48, Qt::black),
-        fontToIcon(QChar(0xe67b), 48, Qt::black),
+        fontToIcon(QChar(0xe605), 64, Qt::black),
+        fontToIcon(QChar(0xe85e), 64, Qt::black),
+        fontToIcon(QChar(0xe7ac), 64, Qt::black),
+        fontToIcon(QChar(0xe85d), 64, Qt::black),
+        fontToIcon(QChar(0xe67b), 64, Qt::black),
     });
 
 
@@ -118,13 +141,24 @@ void MainWidget::initTopTool()
 
 
     ui->saveToolButton->setIcon(iconList[5]);
+    connect(ui->saveToolButton, &QPushButton::clicked,
+            sqlWidget, &SQLiteWidget::saveSQLiteDB);
 
 
-    ui->saveAsToolButton->setIcon(iconList[6]);
+    ui->closeToolButton->setIcon(iconList[6]);
+    connect(ui->closeToolButton, &QPushButton::clicked,
+            sqlWidget, &SQLiteWidget::closeSQLiteDB);
 
 
     ui->exitToolButton->setIcon(iconList[7]);
     connect(ui->exitToolButton, &QPushButton::clicked, &QApplication::quit);
+
+    auto lastOpenFilePath(SETTINGS().value(_DB_LAST_OPEN_).toString());
+    if (!lastOpenFilePath.isEmpty() && QFile(lastOpenFilePath).exists())
+    {
+        ui->saveToolButton->setEnabled(true);
+        ui->closeToolButton->setEnabled(true);
+    }
 }
 
 void MainWidget::loadSettings()

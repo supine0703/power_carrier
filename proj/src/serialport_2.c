@@ -54,7 +54,7 @@ void SP_QTransmitData(uchar* buf, uchar n, bit second)
 #endif
 
 #ifdef USE_QUERY_RECEIVE
-bit SP1_QRWait(uint t) // 11.0592 约1ms
+bit SP1_QRWait(uchar t) // 11.0592 约1ms
 {
     unsigned char i, j;
     if (RI)

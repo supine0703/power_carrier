@@ -7,8 +7,6 @@ namespace Ui {
 class NewDBFileDialog;
 }
 
- 
-
 class NewDBFileDialog : public QDialog
 {
     Q_OBJECT
