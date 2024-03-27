@@ -251,7 +251,9 @@ void SerialPortWidget::connectSPWorker()
         }
 
         if (!ui->log2LookPushButton->isChecked()) {
-            ui->log2TextEdit->setTextColor(QColor(0, 85, 0));
+            ui->log2TextEdit->setTextColor(
+                spWorker->isChannel() ? QColor(0, 85, 0) :
+                    QColor(Qt::darkMagenta));
             ui->log2TextEdit->append(QString("[%1]:RX <- %2").arg(
                 QTime::currentTime().toString("HH:mm:ss:zzz"),
                 bytes.toHex(' ').trimmed().toUpper()

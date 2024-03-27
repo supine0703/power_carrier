@@ -4,8 +4,14 @@
 #define uint unsigned int
 
 // ============================================================================
-
 #ifdef USE_QUERY_TRANSMIT
+// void (*SP_QTWait)(uint) = 0;
+
+// void SP_Set_QTWait(void (*waitFn)(uint))
+// {
+//     SP_QTWait = waitFn;
+// }
+
 void SP_QTransmitByte(uchar byte, bit second)
 {
     if (second)
@@ -24,26 +30,33 @@ void SP_QTransmitByte(uchar byte, bit second)
     }
 }
 
-void SP_QTransmitData(uchar* buf, uchar n, uchar cutT, bit second)
+void SP_QTransmitData(uchar* buf, uchar n, bit second)
 {
-    uchar t;
     if (n)
         do
         {
-            SP_QTransmitByte(*buf, second);
-            t = cutT;
-            if (t)
-                while (--t)
-                    ;
+            SP_QTransmitByte(*buf, second);    
             buf++;
         } while (--n);
 }
+
+// void SP_QTransmitData(uchar* buf, uchar n, uint cutT, bit second)
+// {
+//     if (n)
+//         do
+//         {
+//             SP_QTransmitByte(*buf, second);
+//             // if (SP_QTWait)
+//             //     SP_QTWait(cutT);
+//             buf++;
+//         } while (--n);
+// }
 #endif
 
 #ifdef USE_QUERY_RECEIVE
-bit SP1_QRWait(uchar t) // 12MHz (t*1000 + 11)us above 1ms
+bit SP1_QRWait(uint t) // 11.0592 约1ms
 {
-    uchar i;
+    unsigned char i, j;
     if (RI)
     {
         RI = 0;
@@ -52,19 +65,20 @@ bit SP1_QRWait(uchar t) // 12MHz (t*1000 + 11)us above 1ms
     while (t)
     {
         t--;
-        for (i = 124; i; --i)
-            if (RI)
-            {
-                RI = 0;
-                return 1;
-            }
+        for (i = 11; i; --i)
+            for (j = 124; j; --j)
+                if (RI)
+                {
+                    RI = 0;
+                    return 1;
+                }
     }
     return 0;
 }
 
-bit SP2_QRWait(uchar t) // 12MHz (t*1000 + 11)us above 1ms
+bit SP2_QRWait(uint t) // 11.0592 约1ms
 {
-    uchar i;
+    unsigned char i, j;
     if (S2_CHECK(S2RI))
     {
         S2_SET_L(S2RI);
@@ -73,17 +87,18 @@ bit SP2_QRWait(uchar t) // 12MHz (t*1000 + 11)us above 1ms
     while (t)
     {
         t--;
-        for (i = 124; i; --i)
-            if (S2_CHECK(S2RI))
-            {
-                S2_SET_L(S2RI);
-                return 1;
-            }
+        for (i = 25; i; --i)
+            for (j = 43; j; --j)
+                if (S2_CHECK(S2RI))
+                {
+                    S2_SET_L(S2RI);
+                    return 1;
+                }
     }
     return 0;
 }
 
-bit SP_QReceiveByte(uchar* buf, uchar t, bit second)
+bit SP_QReceiveByte(uchar* buf, uint t, bit second)
 {
     if (second)
     {
@@ -101,7 +116,7 @@ bit SP_QReceiveByte(uchar* buf, uchar t, bit second)
     return 0;
 }
 
-uchar SP_QReceiveData(uchar* buf, uchar waitT, uchar cutT, bit second)
+uchar SP_QReceiveData(uchar* buf, uint waitT, uint cutT, bit second)
 {
     uchar count = 0;
     if (SP_QReceiveByte(buf, waitT, second))

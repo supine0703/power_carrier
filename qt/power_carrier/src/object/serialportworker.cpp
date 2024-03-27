@@ -28,6 +28,11 @@ const QString &SerialPortWorker::currentPortName() const
     return portName;
 }
 
+bool SerialPortWorker::isChannel() const
+{
+    return channelFlg;
+}
+
 
 void SerialPortWorker::setAll(int br, int db, int sb, int p)
 {
@@ -170,7 +175,8 @@ void SerialPortWorker::receiveHostOrder()
             buf.clear();
             buf.append(_ACK_WORD_);
             buf.append(_PC_ADDR_);
-            this->transmit(buf);
+            CRC16::ADD_XMODEM(buf);
+            m_sp->write(buf);
             break;
         case _CLOSE_ADDR_:
             channelFlg = false;

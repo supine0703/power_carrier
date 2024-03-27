@@ -43,8 +43,8 @@
 #define S2RI  0x01
 
 #define S2_CHECK(X) (S2CON & X)
-#define S2_SET_L(X) (S2CON &= X)
 #define S2_SET_H(X) (S2CON |= X)
+#define S2_SET_L(X) (S2CON &= ~X)
 
 
 // ------- define for lcd1602 ----------

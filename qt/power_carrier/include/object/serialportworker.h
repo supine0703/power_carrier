@@ -17,6 +17,7 @@ public:
 
     const QString &currentPortName() const;
 
+    bool isChannel() const;
 
 public slots:
     void setAll(int br, int db, int sb, int p);
