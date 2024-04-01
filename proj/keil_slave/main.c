@@ -46,30 +46,30 @@ void int_4() interrupt 4
     ES = 0; // 禁止串行中断，防止在发送数据器件突然发送中断
     if (RI)
     {
-        // RI = 0;
-        // SP_QTransmitByte(SBUF);
-        if (SM0)
-        { // 如果11位通信
-            if (RB8)
-            {
-                SP_QReceiveByte(buf, 0);
-                addrFunc(buf);
-            }
-            else if (receiveCheck(buf, 0))
-                wordFunc(buf);
-            else
-                crcErrFunc();
-        }
-        else
-        { // 如果是10位通信
-            flg = receiveCheck(buf, &len);
-            if (len == 1)
-                addrFunc(buf);
-            else if (flg)
-                wordFunc(buf);
-            else
-                crcErrFunc();
-        }
+        RI = 0;
+        SP_QTransmitByte(SBUF);
+        // if (SM0)
+        // { // 如果11位通信
+        //     if (RB8)
+        //     {
+        //         SP_QReceiveByte(buf, 0);
+        //         addrFunc(buf);
+        //     }
+        //     else if (receiveCheck(buf, 0))
+        //         wordFunc(buf);
+        //     else
+        //         crcErrFunc();
+        // }
+        // else
+        // { // 如果是10位通信
+        //     flg = receiveCheck(buf, &len);
+        //     if (len == 1)
+        //         addrFunc(buf);
+        //     else if (flg)
+        //         wordFunc(buf);
+        //     else
+        //         crcErrFunc();
+        // }
     }
     ES = 1;
 }

@@ -54,7 +54,7 @@ void SP_QTransmitData(uchar* buf, uchar n, bit second)
 #endif
 
 #ifdef USE_QUERY_RECEIVE
-bit SP1_QRWait(uchar t) // 11.0592 约1ms
+bit SP1_QRWait(uint t) // 11.0592 约1ms
 {
     unsigned char i, j;
     if (RI)
@@ -100,19 +100,18 @@ bit SP2_QRWait(uint t) // 11.0592 约1ms
 
 bit SP_QReceiveByte(uchar* buf, uint t, bit second)
 {
-    unsigned char len;
     if (second)
     {
         if (SP2_QRWait(t))
         {
-            len = S2BUF;
-            if (SP2_QRWait(t))
-                *buf = S2BUF;
+            *buf = S2BUF;
+            return 1;
         }
     }
     else if (SP1_QRWait(t))
     {
         *buf = SBUF;
+        return 1;
     }
     return 0;
 }

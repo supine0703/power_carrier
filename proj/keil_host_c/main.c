@@ -14,11 +14,11 @@
 #define WITH_PC 0
 #define WITH_SLAVE 1
 
-#define R_PC_WAIT_TIME 20
+#define R_PC_WAIT_TIME 40
 #define R_PC_CUT_TIME 10
 
-#define R_SLAVE_WAIT_TIME 100
-#define R_SLAVE_CUT_TIME 4
+#define R_SLAVE_WAIT_TIME 200
+#define R_SLAVE_CUT_TIME 10
 
 unsigned char KeyValue(void);
 void Delay1ms(unsigned int t);
@@ -74,6 +74,7 @@ unsigned char ask[3] = {_ASK_WORD_};
 
 void test();
 void test2();
+void test3();
 void communicationWithPC();
 
 void main(void)
@@ -89,16 +90,18 @@ void main(void)
 
     while (1)
     {
-        communicationWithPC();
+        // communicationWithPC();
         // test();
         // test2();
+        test2();
     }
 }
 
 void communicationWithPC()
 {
     bit flg;
-    unsigned char buf[16];
+    unsigned char _buf[17];
+    unsigned char* buf = _buf + 1;
     if (!pcChannel)
         createPCChannel();
     if (pcChannel)
@@ -143,32 +146,32 @@ void communicationWithPC()
     }
 }
 
-void test()
-{
-    unsigned char key, len;
-    unsigned char buf[10];
+// void test()
+// {
+//     // unsigned char key, len;
+//     // unsigned char buf[10];
 
-    // createPCChannel();
-    // closePCChannel();
-    // 接收按键
-    key = KeyValue();
-    while (KEY_MATRIX != 0x0f)
-        ; // 松开按键后
-    if (key != 0xff)
-    {
-        if (!updateSlaveState(1, key, buf))
-        {
-            buf[0] = _SSU_WORD_;
-            buf[1] = 1;
-            buf[2] = 0xff;
-            len = CRC16_ADD_XMODEM(buf, 3);
-        }
-        SP_QTransmitData(buf, len, WITH_PC);
-        Delay1ms(R_PC_CUT_TIME);
-        // SP_QTransmitByte(key, WITH_PC);
-        // SP_QTransmitByte(key, WITH_SLAVE);
-    }
-}
+//     // // createPCChannel();
+//     // // closePCChannel();
+//     // // 接收按键
+//     // key = KeyValue();
+//     // while (KEY_MATRIX != 0x0f)
+//     //     ; // 松开按键后
+//     // if (key != 0xff)
+//     // {
+//     //     if (!updateSlaveState(1, key, buf))
+//     //     {
+//     //         buf[0] = _SSU_WORD_;
+//     //         buf[1] = 1;
+//     //         buf[2] = 0xff;
+//     //         len = CRC16_ADD_XMODEM(buf, 3);
+//     //     }
+//     //     SP_QTransmitData(buf, len, WITH_PC);
+//     //     Delay1ms(R_PC_CUT_TIME);
+//     //     // SP_QTransmitByte(key, WITH_PC);
+//     //     // SP_QTransmitByte(key, WITH_SLAVE);
+//     // }
+// }
 
 unsigned char xdata buffer[255];
 
@@ -179,6 +182,19 @@ void test2()
     SP_QTransmitData(buffer, len, WITH_PC);
 }
 
+// void test3()
+// {
+//     unsigned char buf[10];
+//     unsigned char len;
+//     SP_QTransmitByte(1, WITH_SLAVE);
+//     SP_QTransmitByte(0x1f, WITH_SLAVE);
+//     len = SP_QReceiveData(buf, R_SLAVE_WAIT_TIME, R_SLAVE_CUT_TIME, WITH_SLAVE);
+//     SP_QTransmitData(buf, len, WITH_PC);
+//     if (len == 0)
+//         SP_QTransmitByte(0x77, WITH_PC);
+//     Delay1ms(1000);
+// }
+
 /* ========================================================================== */
 
 /* -------------------------------------------------------------------------- */
@@ -187,6 +203,9 @@ bit receiveCheckWithPC(unsigned char* buf)
 { // 接收数据并检验真假
     unsigned char length =
         SP_QReceiveData(buf, R_PC_WAIT_TIME, R_PC_CUT_TIME, WITH_PC);
+    // SP_QTransmitData(buf, length, WITH_PC);
+    // if (length == 0)
+    //     SP_QTransmitByte(0x77, WITH_PC);
     return CRC16_CHECK_XMODEM(buf, length);
 }
 
@@ -321,7 +340,7 @@ bit updateSlaveState(unsigned char addr, unsigned char word, unsigned char* buf)
         Delay1ms(R_PC_CUT_TIME);
     }
     if (!flg)
-        buf[1] = word;
+        buf[1] = addr;
     createPCChannel();
     return flg;
 }
