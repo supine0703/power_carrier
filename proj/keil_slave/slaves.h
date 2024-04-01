@@ -1,7 +1,7 @@
 #ifndef SLAVES_H
 #define SLAVES_H
 
-#define MODEL 1
+#define MODEL 2
 
 #include "__config__.h"
 
@@ -12,8 +12,33 @@ bit updateState(unsigned char word);
 #if MODEL == 0
 #define THIS_ADDR 0x00
 
+unsigned char byte = 0;
+
+void wait(unsigned int t)
+{
+    unsigned char i;
+    while (t)
+    {
+        t--;
+        for (i = 124; i; --i)
+            if (i == 200)
+                break;
+    }
+}
+
+
 void FuncInit(void) {}
-void Func(void) {}
+void Func(void) 
+{
+    unsigned char len = 16;
+    SP_QTransmitByte(len);
+    while (len--)
+    {
+        SP_QTransmitByte(byte++);
+        wait(0);
+    }
+    wait(6000);
+}
 
 bit updateState(unsigned char word)
 {
@@ -28,7 +53,7 @@ bit updateState(unsigned char word)
     }
     return 1;
 }
-
+ 
 
 #elif MODEL == 1
 #define THIS_ADDR 0x01
@@ -76,7 +101,7 @@ bit updateState(unsigned char word)
 }
 
 #elif MODEL == 2
-#define THIS_ADDR 0x02
+#define THIS_ADDR 0x1f
 
 #include "lcd1602.h"
 void FuncInit(void)
@@ -88,10 +113,10 @@ void FuncInit(void)
     LCD1602_WriteCmd(Clear_Screen);         // 命令1
     LCD1602_WriteCmd(Move_Cursor_Row1_Col(6));
     num = MODEL >> 4;
-    num += num >= 10 ? 55 : 48;
+    num += ((num >= 10) ? 55 : 48);
     LCD1602_WriteData(num);
     num = MODEL & 0x0f;
-    num += num >= 10 ? 55 : 48;
+    num += ((num >= 10) ? 55 : 48);
     LCD1602_WriteData(num);
     LCD1602_WriteData(':');
 }
@@ -106,13 +131,20 @@ bit updateState(unsigned char word)
         LCD1602_WriteData('0' + word);
         return 1;
     }
+    else if (word <= 35)
+    {
+        LCD1602_WriteCmd(Move_Cursor_Row1_Col(9));
+        LCD1602_WriteData(55 + word);
+        return 1;
+    }
     else
     {
         LCD1602_WriteCmd(Move_Cursor_Row1_Col(9));
-        LCD1602_WriteData('N');
+        LCD1602_WriteData('!');
         return 0;
     }
 }
+
 #elif MODEL == 3
 #define THIS_ADDR 0x03
 

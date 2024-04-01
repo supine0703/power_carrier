@@ -26,8 +26,8 @@ void init(void)
     TR1 = 1; // 启动定时器
 
     // 中断初始化
-    EA = 1; // 中断允许
-    ES = 1; // 串口中断允许
+    // EA = 1; // 中断允许
+    // ES = 1; // 串口中断允许
 }
 
 void main(void)
@@ -59,7 +59,6 @@ void int_4() interrupt 4
                 wordFunc(buf);
             else
                 crcErrFunc();
-
         }
         else
         { // 如果是10位通信
@@ -80,7 +79,7 @@ bit receiveCheck(unsigned char* buf, unsigned char* len)
     unsigned char length = RECEIVE(buf);
     if (len)
         *len = length;
-    return CRC16_CHECK_XMODEM(buf, length);
+    return CRC16_CHECK_XMODEM(buf, length) && *buf == length;
 }
 
 void addrFunc(unsigned char* buf)

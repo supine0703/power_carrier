@@ -100,18 +100,19 @@ bit SP2_QRWait(uint t) // 11.0592 约1ms
 
 bit SP_QReceiveByte(uchar* buf, uint t, bit second)
 {
+    unsigned char len;
     if (second)
     {
         if (SP2_QRWait(t))
         {
-            *buf = S2BUF;
-            return 1;
+            len = S2BUF;
+            if (SP2_QRWait(t))
+                *buf = S2BUF;
         }
     }
     else if (SP1_QRWait(t))
     {
         *buf = SBUF;
-        return 1;
     }
     return 0;
 }

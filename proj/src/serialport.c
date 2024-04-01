@@ -70,6 +70,7 @@ void SP_QTransmitByte(uchar byte)
 
 void SP_QTransmitData(uchar* buf, uchar n)
 {
+    SP_QTransmitByte(n); // KQ130F 协议 第一字节为长度
     if (n)
         do
         {
@@ -114,6 +115,7 @@ bit SP_QReceiveByte(uchar* buf, uchar t)
 uchar SP_QReceiveData(uchar* buf, uchar waitT, uchar cutT)
 {
     uchar count = 0;
+    if (SP_QReceiveByte(buf, waitT)) // KQ130F 协议 第一字节为长度
     if (SP_QReceiveByte(buf, waitT))
     {
         do

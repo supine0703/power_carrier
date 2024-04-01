@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QFontDatabase>
 
-
+#include <agsl.h>
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
@@ -31,6 +31,9 @@ int main(int argc, char* argv[])
     MainWidget w;
     w.show();
     w.adjustDisplay();
+    // AGSL ags(R"(E:\Project\.Github\power_carrier\qt\power_carrier\GAS\gas.txt)");
+    // ags.scanner();
+    // ags.parser();
 
     return a.exec();
 }

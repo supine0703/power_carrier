@@ -73,6 +73,7 @@ bit updateSlaveState(
 unsigned char ask[3] = {_ASK_WORD_};
 
 void test();
+void test2();
 void communicationWithPC();
 
 void main(void)
@@ -90,6 +91,7 @@ void main(void)
     {
         communicationWithPC();
         // test();
+        // test2();
     }
 }
 
@@ -168,6 +170,15 @@ void test()
     }
 }
 
+unsigned char xdata buffer[255];
+
+void test2()
+{
+    unsigned char len;
+    len = SP_QReceiveData(buffer, 5000, 10, WITH_SLAVE);
+    SP_QTransmitData(buffer, len, WITH_PC);
+}
+
 /* ========================================================================== */
 
 /* -------------------------------------------------------------------------- */
@@ -205,10 +216,24 @@ void createPCChannel()
 
 /* -------------------------------------------------------------------------- */
 
+void KQ130_TransmitByte(unsigned char buf)
+{
+    SP_QTransmitByte(1, WITH_SLAVE);
+    SP_QTransmitByte(buf, WITH_SLAVE);
+}
+
+void KQ130_TransmitData(unsigned char* buf, unsigned char len)
+{
+    SP_QTransmitByte(len, WITH_SLAVE);
+    SP_QTransmitData(buf, len, WITH_SLAVE);
+}
+
 bit receiveCheckWithSlave(unsigned char* buf, unsigned char* len)
 { // 接收数据并检验真假
-    unsigned char length =
-        SP_QReceiveData(buf, R_SLAVE_WAIT_TIME, R_SLAVE_CUT_TIME, WITH_SLAVE);
+    unsigned char length = SP_QReceiveData(
+        buf - 1, R_SLAVE_WAIT_TIME, R_SLAVE_CUT_TIME, WITH_SLAVE
+    );
+    length--;
     if (len)
         *len = length;
     return CRC16_CHECK_XMODEM(buf, length);
@@ -217,30 +242,31 @@ bit receiveCheckWithSlave(unsigned char* buf, unsigned char* len)
 void closeSlaveChannel()
 {
     S2_SET_H(S2TB8);
-    SP_QTransmitByte(_CLOSE_ADDR_, WITH_SLAVE);
+    KQ130_TransmitByte(_CLOSE_ADDR_);
     Delay1ms(R_SLAVE_CUT_TIME);
     slaveChannel = 0;
 }
 
 void resetSlaveChannel(unsigned char addr, unsigned char* buf)
 {
-    SP_QTransmitByte(_REN_ADDR_, WITH_SLAVE);
+    KQ130_TransmitByte(_REN_ADDR_);
     slaveChannel = receiveCheckWithSlave(buf, 0);
     if (!slaveChannel)
     {
         closeSlaveChannel();
-        SP_QTransmitByte(addr, WITH_SLAVE);
+        KQ130_TransmitByte(addr);
         slaveChannel = receiveCheckWithSlave(buf, 0);
     }
 }
 
 void createSlaveChannel(unsigned char addr)
 {
-    unsigned char buf[4];
+    unsigned char _buf[5];
+    unsigned char* buf = _buf + 1;
     S2_SET_H(S2TB8);
     if (slaveChannel)
         closeSlaveChannel();
-    SP_QTransmitByte(addr, WITH_SLAVE);
+    KQ130_TransmitByte(addr);
     slaveChannel = receiveCheckWithSlave(buf, 0);
     if (!slaveChannel)
         resetSlaveChannel(addr, buf);
@@ -263,9 +289,10 @@ bit updateSlaveState(unsigned char addr, unsigned char word, unsigned char* buf)
 {
     bit flg;
     unsigned char len;
-    unsigned char rBuf[4];
+    unsigned char _rBuf[5];
+    unsigned char* rBuf = _rBuf + 1;
     closePCChannel();
-    SP_QTransmitByte(addr, WITH_PC);
+    KQ130_TransmitByte(addr);
     // Delay1ms(R_PC_CUT_TIME);
     createSlaveChannel(addr);
     if (slaveChannel)
@@ -274,10 +301,10 @@ bit updateSlaveState(unsigned char addr, unsigned char word, unsigned char* buf)
         rBuf[1] = word;
         len = CRC16_ADD_XMODEM(rBuf, 2);
         SP_QTransmitData(rBuf, len, WITH_PC);
-        SP_QTransmitData(rBuf, len, WITH_SLAVE);
+        KQ130_TransmitData(rBuf, len);
         if (!(flg = receiveCheckWithSlave(buf, &len)))
         {
-            SP_QTransmitData(rBuf, len, WITH_SLAVE);
+            KQ130_TransmitData(rBuf, len);
             flg = receiveCheckWithSlave(buf, &len);
         }
         if (len)

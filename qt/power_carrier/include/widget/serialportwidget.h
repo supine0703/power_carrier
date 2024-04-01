@@ -94,8 +94,6 @@ private slots:
     void on_log2UnLookPushButton_clicked(bool off);
 
 
-
-
 private:
     Ui::SerialPortWidget* ui;
 
@@ -121,6 +119,7 @@ private:
 
 signals:
     void activateWatchdog(int = 400);
+
     void reSetSerialPort(int, int, int, int);
     void closeSPWarning();
 
