@@ -126,7 +126,7 @@ QPushButton::pressed {
          </size>
         </property>
         <property name="title">
-         <string>串口助手</string>
+         <string>串口设置</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

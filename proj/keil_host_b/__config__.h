@@ -54,7 +54,7 @@
 
 // -------------------------------------
 
-#define KEY_MATRIX P1
+#define KEY_MATRIX P2
 #define KEY_SP // 定义按键的引脚P
 #define KEY_SB // 定义按键有效的位
 

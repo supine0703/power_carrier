@@ -3,7 +3,6 @@
 #include <QApplication>
 #include <QFontDatabase>
 
-#include <agsl.h>
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);

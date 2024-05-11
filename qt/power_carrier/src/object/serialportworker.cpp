@@ -335,7 +335,7 @@ bool SerialPortWorker::theInfoIsKey(const QByteArray& bytes)
 {
     if (bytes.length() < 2)
     {
-        if (bytes.at(0) == _ACTION_)
+        // if (bytes.at(0) == _ACTION_)
             return true;
     }
     else if (bytes.length() == 2)
@@ -345,7 +345,6 @@ bool SerialPortWorker::theInfoIsKey(const QByteArray& bytes)
     switch (bytes.at(0))
     {
     case _SSU_WORD_:
-        return true;
     case _SNS_WORD_:
         return true;
     case _REN_WORD_:

@@ -7,9 +7,8 @@
 #include "serialport.h"
 #include "slaves.h"
 
-#define WAIT_TIME 40
-#define CUT_TIME 4
-#define RECEIVE(buf_p) SP_QReceiveData(buf_p, WAIT_TIME, CUT_TIME)
+#define WAIT 135 // 90 * 1.5
+
 bit receiveCheck(unsigned char* buf, unsigned char* len);
 void addrFunc(unsigned char* buf);
 void wordFunc(unsigned char* buf);
@@ -26,8 +25,8 @@ void init(void)
     TR1 = 1; // 启动定时器
 
     // 中断初始化
-    // EA = 1; // 中断允许
-    // ES = 1; // 串口中断允许
+    EA = 1; // 中断允许
+    ES = 1; // 串口中断允许
 }
 
 void main(void)
@@ -38,6 +37,9 @@ void main(void)
         Func();
 }
 
+bit connect = 0;
+unsigned int count = 0;
+
 void int_4() interrupt 4
 {
     bit flg;
@@ -46,57 +48,71 @@ void int_4() interrupt 4
     ES = 0; // 禁止串行中断，防止在发送数据器件突然发送中断
     if (RI)
     {
-        RI = 0;
-        SP_QTransmitByte(SBUF);
-        // if (SM0)
-        // { // 如果11位通信
-        //     if (RB8)
-        //     {
-        //         SP_QReceiveByte(buf, 0);
-        //         addrFunc(buf);
-        //     }
-        //     else if (receiveCheck(buf, 0))
-        //         wordFunc(buf);
-        //     else
-        //         crcErrFunc();
-        // }
-        // else
-        // { // 如果是10位通信
-        //     flg = receiveCheck(buf, &len);
-        //     if (len == 1)
-        //         addrFunc(buf);
-        //     else if (flg)
-        //         wordFunc(buf);
-        //     else
-        //         crcErrFunc();
-        // }
+        // RI = 0;
+        // LCD1602_WriteData('0' + SBUF);
+        // SP_QTransmitByte(SBUF);
+        if (SM0)
+        { // 如果11位通信
+#if 0
+            if (RB8)
+            {
+                SP_QReceiveByte(buf, 0);
+                addrFunc(buf);
+            }
+            else if (receiveCheck(buf, 0))
+                wordFunc(buf);
+            else
+                crcErrFunc();
+#endif
+        }
+        else
+        { // 如果是10位通信
+            flg = receiveCheck(buf, &len);
+            if (len == 1)
+            {
+                addrFunc(buf);
+            }
+            else if (flg)
+                wordFunc(buf);
+            else
+                crcErrFunc();
+        }
     }
+    count++;
     ES = 1;
 }
 
 bit receiveCheck(unsigned char* buf, unsigned char* len)
 { // 接收数据并检验真假
-    unsigned char length = RECEIVE(buf);
+    unsigned char length = 0;
+    bit flg = SP_QReceiveData(buf, &length, WAIT);
     if (len)
         *len = length;
-    return CRC16_CHECK_XMODEM(buf, length) && *buf == length;
+    if (!flg)
+        return 0;
+    return CRC16_CHECK_XMODEM(buf, length);
 }
 
 void addrFunc(unsigned char* buf)
 {
+    static bit flg = 1;
+    static unsigned char ack[4] = {_ACK_WORD_, THIS_ADDR};
+    if (flg)
+    {
+        flg = 0;
+        CRC16_ADD_XMODEM(ack, 2);
+    }
     switch (buf[0])
     {
-    case _REN_ADDR_:
-        if (SM2 == 1)
-            break;
+    // case _REN_ADDR_:
+    //     if (!connect)
+    //         break;
     case THIS_ADDR: // 建立信道
-        SM2 = 0;
-        buf[0] = _ACK_WORD_;
-        buf[1] = THIS_ADDR;
-        SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 2));
+        connect = 1;
+        SP_QTransmitData(ack, 4);
         break;
     case _CLOSE_ADDR_:
-        SM2 = 1;
+        connect = 0;
         break;
     default:
         break;
@@ -105,6 +121,8 @@ void addrFunc(unsigned char* buf)
 
 void wordFunc(unsigned char* buf)
 {
+    if (!connect)
+        return;
     switch (buf[0])
     {
     case _US_WORD_:
@@ -125,6 +143,14 @@ void wordFunc(unsigned char* buf)
 
 void crcErrFunc(void)
 {
-    unsigned char err[4] = {_REN_WORD_, _ERR_CRC_REN_};
-    SP_QReceiveByte(err, CRC16_ADD_XMODEM(err, 3));
+    static bit flg = 1;
+    static unsigned char err[4] = {_REN_WORD_, _ERR_CRC_REN_};
+    if (flg)
+    {
+        flg = 0;
+        CRC16_ADD_XMODEM(err, 2);
+    }
+    if (!connect)
+        return;
+    SP_QReceiveByte(err, 4);
 }

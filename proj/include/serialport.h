@@ -39,8 +39,8 @@ extern void SP_QTransmitData(unsigned char* buf, unsigned char n);
 
 extern bit SP_QReceiveByte(unsigned char* buf, unsigned char t);
 
-extern unsigned char SP_QReceiveData(
-    unsigned char* buf, unsigned char waitT, unsigned char cutT
+extern bit SP_QReceiveData(
+    unsigned char* buf, unsigned char* len, unsigned char t
 );
 
 // 早期通用版

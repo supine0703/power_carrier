@@ -112,10 +112,10 @@ bit updateSlaveState(unsigned char addr, unsigned char word, unsigned char* buf)
     {
         buf[0] = _US_WORD_;
         buf[1] = word;
-        SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 2), 1);
+        // SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 2), 1);
         if (!(flg = receiveCheck(buf)))
         {
-            SP_QTransmitData(buf, 4, 1);
+            // SP_QTransmitData(buf, 4, 1);
             flg = receiveCheck(buf);
         }
     }
@@ -132,76 +132,77 @@ void main(void)
     LCD1602_Action();
     init();
 
-    SP_QTransmitByte(_ACTION_);
-    Delay1ms(CUT_TIME);
+    // SP_QTransmitByte(_ACTION_);
+    // Delay1ms(CUT_TIME);
 
     LCD1602_ShowString(":", 0);
 
     while (1)
     {
-        createChannel(_PC_ADDR_);
-        if (channel)
-        {
-            buf[0] = _ASK_WORD_;
-            SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 1), 0);
-            while (receiveCheck(buf) && buf[0] != _NULL_WORD_)
-            {
-                switch (buf[0])
-                {
-                case _SSU_WORD_:
-                    // SP_QTransmitData(buf, 5, 0);
-                    // continue;
-                    if (!updateSlaveState(buf[1], buf[2], buf))
-                    {
-                        buf[0] = _SSU_WORD_;
-                        buf[2] = 0xff;
-                        CRC16_ADD_XMODEM(buf, 3);
-                    }
-                    else
-                    {
-                        buf[0] = 0xcc;
-                        buf[1] = 0xcc;
-                        buf[2] = 0xcc;
-                        buf[3] = 0xcc;
-                    }
-                    createChannel(_PC_ADDR_);
-                    if (channel)
-                    {
-                        SP_QTransmitData(buf, 5, 0);
-                        continue;
-                    }
-                    else
-                        channel = 0;
-                    break;
-                case _ACK_WORD_:
+        // createChannel(_PC_ADDR_);
+        // if (channel)
+        // {
+        //     buf[0] = _ASK_WORD_;
+        //     // SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 1), 0);
+        //     while (receiveCheck(buf) && buf[0] != _NULL_WORD_)
+        //     {
+        //         switch (buf[0])
+        //         {
+        //         case _SSU_WORD_:
+        //             // SP_QTransmitData(buf, 5, 0);
+        //             // continue;
+        //             if (!updateSlaveState(buf[1], buf[2], buf))
+        //             {
+        //                 buf[0] = _SSU_WORD_;
+        //                 buf[2] = 0xff;
+        //                 CRC16_ADD_XMODEM(buf, 3);
+        //             }
+        //             else
+        //             {
+        //                 buf[0] = 0xcc;
+        //                 buf[1] = 0xcc;
+        //                 buf[2] = 0xcc;
+        //                 buf[3] = 0xcc;
+        //             }
+        //             createChannel(_PC_ADDR_);
+        //             if (channel)
+        //             {
+        //                 // SP_QTransmitData(buf, 5, 0);
+        //                 continue;
+        //             }
+        //             else
+        //                 channel = 0;
+        //             break;
+        //         case _ACK_WORD_:
 
-                    break;
-                case _REN_WORD_:
+        //             break;
+        //         case _REN_WORD_:
 
-                    break;
-                default:
-                    break;
-                }
-                if (!channel)
-                    break;
-                buf[0] = _ASK_WORD_;
-                SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 1), 0);
-            }
-            closeChannel();
-        }
+        //             break;
+        //         default:
+        //             break;
+        //         }
+        //         if (!channel)
+        //             break;
+        //         buf[0] = _ASK_WORD_;
+        //         // SP_QTransmitData(buf, CRC16_ADD_XMODEM(buf, 1), 0);
+        //     }
+        //     closeChannel();
+        // }
         // else
         // {
-        //     // 接收按键
-        //     key = KeyValue();
-        //     while (KEY_MATRIX != 0x0f)
-        //         ; // 松开按键后
-        //     if (key != 0xff)
-        //     {
-        //         updateSlaveState((key >> 2) + 1, key, buf);
-        //     }
+            // 接收按键
+            key = KeyValue();
+            while (KEY_MATRIX != 0x0f)
+                ; // 松开按键后
+            if (key != 0xff)
+            {
+                // updateSlaveState((key >> 2) + 1, key, buf);
+                LCD1602_WriteData('0' + key);
+            }
             
         // }
-        Delay1ms(5000);
+        // Delay1ms(5000);
     }
 }
 
@@ -221,8 +222,10 @@ unsigned char KeyValue(void)
 {
     char i;
     unsigned char col, row;
-    unsigned char cv[] = {0x07, 0x0b, 0x0d, 0x0e};
-    unsigned char rv[] = {0x70, 0xb0, 0xd0, 0xe0};
+    // unsigned char cv[] = {0x07, 0x0b, 0x0d, 0x0e};
+    // unsigned char rv[] = {0x70, 0xb0, 0xd0, 0xe0};
+    unsigned char cv[] = {0x8f, 0x4f, 0x2f, 0x1f};
+    unsigned char rv[] = {0xf8, 0xf4, 0xf2, 0xf1};
     KEY_MATRIX = 0x0f; // 列检测
     if (KEY_MATRIX != 0x0f)
     {

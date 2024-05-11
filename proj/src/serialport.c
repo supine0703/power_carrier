@@ -58,7 +58,6 @@
 #endif
 
 // ============================================================================
-
 #ifdef USE_QUERY_TRANSMIT
 void SP_QTransmitByte(uchar byte)
 {
@@ -70,13 +69,95 @@ void SP_QTransmitByte(uchar byte)
 
 void SP_QTransmitData(uchar* buf, uchar n)
 {
-    SP_QTransmitByte(n); // KQ130F 协议 第一字节为长度
-    if (n)
+    if (n > 0)
+    {
+        SP_QTransmitByte(n); // KQ130F 协议 第一字节为长度
         do
         {
             SP_QTransmitByte(*buf);
             buf++;
         } while (--n);
+    }
+}
+#endif
+
+#ifdef USE_QUERY_RECEIVE
+bit SP_QRWait(uchar t) // 12MHz (t*1000 + 11)us above 1ms
+{
+    uchar i;
+    if (RI)
+    {
+        RI = 0;
+        return 1;
+    }
+    while (t)
+    {
+        t--;
+        for (i = 124; i; --i)
+            if (RI)
+            {
+                RI = 0;
+                return 1;
+            }
+    }
+    return 0;
+}
+
+bit SP_QReceiveByte(uchar* buf, uchar t)
+{
+    if (SP_QRWait(t))
+    {
+        *buf = SBUF;
+        return 1;
+    }
+    return 0;
+}
+
+bit SP_QReceiveData(uchar* buf, uchar* len, uchar t)
+{
+    char count = 0;
+    if (SP_QReceiveByte(&count, t)) // KQ130F 协议 第一字节为长度
+    {
+        if (len)
+            *len = count;
+        while (SP_QReceiveByte(buf, t))
+        {
+            if (count >= 0)
+            {
+                count--;
+                buf++;
+            }
+        }
+        if (count == 0)
+            return 1;
+    }
+    if (len)
+        *len = 0;
+    return 0;
+}
+#endif
+
+#if 0
+#ifdef USE_QUERY_TRANSMIT
+void SP_QTransmitByte(uchar byte)
+{
+    SBUF = byte;
+    while (!TI)
+        ; // 判断是否发送成功(发送成功后TI会置1 需手动清0)
+    TI = 0;
+}
+
+void SP_QTransmitData(uchar* buf, uchar n)
+{
+    if (n > 0)
+    {
+        SP_QTransmitByte(n); // KQ130F 协议 第一字节为长度
+        do
+        {
+            SP_QTransmitByte(*buf);
+            buf++;
+        } while (--n);
+    }
 }
 #endif
 
@@ -116,18 +197,18 @@ uchar SP_QReceiveData(uchar* buf, uchar waitT, uchar cutT)
 {
     uchar count = 0;
     if (SP_QReceiveByte(buf, waitT)) // KQ130F 协议 第一字节为长度
-    if (SP_QReceiveByte(buf, waitT))
-    {
-        do
+        if (SP_QReceiveByte(buf, waitT))
         {
-            buf++;
-            count++;
-        } while (SP_QReceiveByte(buf, cutT));
-    }
+            do
+            {
+                buf++;
+                count++;
+            } while (SP_QReceiveByte(buf, cutT));
+        }
     return count;
 }
 #endif
-
+#endif
 // 早期通用版
 /*
 // ============================================================================
