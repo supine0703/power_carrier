@@ -81,9 +81,13 @@ void MainWidget::adjustDisplay()
     int w = this->width();
     int h = this->height();
     if (sW < w || sH < h)
+    {
         this->move(1, 1);
+    }
     else
+    {
         this->move(((sW - w) >> 1), ((sH - h) * 0.4));
+    }
 }
 
 void MainWidget::initTopTool()
@@ -187,7 +191,9 @@ void MainWidget::setCentralWidget(QWidget* widget)
     ui->centralWidget->deleteLater();
     ui->centralLayout->removeWidget(ui->centralWidget);
     if (!widget)
+    {
         widget = new QWidget(this);
+    }
     ui->centralWidget = widget;
     ui->centralLayout->addWidget(widget);
 }

@@ -380,7 +380,9 @@ void SerialPortWidget::setSerialPortStatus(LedColor color)
 {
     this->multipleClicksConnect = false;
     if (this->spWarning->isVisible() && (color == red || color == green))
+    {
         this->spWarning->close();
+    }
 
     switch (color)
     {
@@ -532,11 +534,15 @@ void SerialPortWidget::on_hidePushButton_1_clicked(bool hidden)
     SETTINGS().setValue(_GROUP1_HIDDEN_, hidden);
     ui->serialPortGroupBox->setHidden(hidden);
     if (hidden)
+    {
         ui->hidePushButton_1->setText(
             hiddenName.arg(ui->serialPortGroupBox->title())
         );
+    }
     else
+    {
         ui->hidePushButton_1->setText("v");
+    }
 }
 
 void SerialPortWidget::on_hidePushButton_2_clicked(bool hidden)
@@ -544,11 +550,15 @@ void SerialPortWidget::on_hidePushButton_2_clicked(bool hidden)
     SETTINGS().setValue(_GROUP2_HIDDEN_, hidden);
     ui->log1GroupBox->setHidden(hidden);
     if (hidden)
+    {
         ui->hidePushButton_2->setText(
             hiddenName.arg(ui->log1GroupBox->title())
         );
+    }
     else
+    {
         ui->hidePushButton_2->setText("v");
+    }
     hiddenGroupManager();
 }
 
@@ -557,11 +567,15 @@ void SerialPortWidget::on_hidePushButton_3_clicked(bool hidden)
     SETTINGS().setValue(_GROUP3_HIDDEN_, hidden);
     ui->log2GroupBox->setHidden(hidden);
     if (hidden)
+    {
         ui->hidePushButton_3->setText(
             hiddenName.arg(ui->log2GroupBox->title())
         );
+    }
     else
+    {
         ui->hidePushButton_3->setText("v");
+    }
     hiddenGroupManager();
 }
 
@@ -577,7 +591,9 @@ void SerialPortWidget::on_comPortComboBox_currentIndexChanged(int index)
 void SerialPortWidget::on_comPortRangePushButton_clicked()
 {
     if (crDialog->ready(), (crDialog->exec() == QDialog::Accepted))
+    {
         comList->updateComBox(crDialog->comMin(), crDialog->comMax());
+    }
 }
 
 void SerialPortWidget::on_connectComPushButton_clicked()

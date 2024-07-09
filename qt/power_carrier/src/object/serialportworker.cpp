@@ -16,7 +16,8 @@ SerialPortWorker::SerialPortWorker(QObject* parent)
     , m_mutex(new QMutex)
     , m_timer(nullptr)
     , m_sp(nullptr)
-{}
+{
+}
 
 
 SerialPortWorker::~SerialPortWorker()
@@ -214,10 +215,13 @@ void SerialPortWorker::receiveHostOrder()
                 switch (buf.at(0))
                 {
                 case _ASK_WORD_:
-                    if (waitList.isEmpty()) {
+                    if (waitList.isEmpty())
+                    {
                         b.append(_NULL_WORD_);
                         transmit(b);
-                    } else {
+                    }
+                    else
+                    {
                         b = waitList.at(0);
                         waitList.pop_front();
                         emit waitListRemove(0);
@@ -250,11 +254,15 @@ void SerialPortWorker::receiveHostOrder()
         }
     }
     else if (buf.length() == 2)
+    {
         emit errorLog("receive must not 2b!");
         // qDebug() << "receive length: 2 --error!";
+    }
     else if (buf.isEmpty())
+    {
         emit errorLog("receive null!");
-    // qDebug() << "receive null";
+        // qDebug() << "receive null";
+    }
 }
 
 
@@ -339,9 +347,13 @@ bool SerialPortWorker::theInfoIsKey(const QByteArray& bytes)
             return true;
     }
     else if (bytes.length() == 2)
+    {
         return true;
+    }
     else if (!CRC16::CHECK_XMODEM(bytes))
+    {
         return true;
+    }
     switch (bytes.at(0))
     {
     case _SSU_WORD_:

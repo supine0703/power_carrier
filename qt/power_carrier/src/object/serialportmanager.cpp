@@ -49,11 +49,13 @@ void SerialPortManager::updateAvailablePorts()
     {
         m_availablePorts.append(
             infoT.arg(portInfo.portName(), portInfo.description())
-    );
+        );
     }
 
     if (ap.length() != m_availablePorts.length())
+    {
         flg = true;
+    }
     else
     {
         for (int i = 0, end = ap.length(); i < end; i++)
@@ -67,7 +69,9 @@ void SerialPortManager::updateAvailablePorts()
     }
 
     if (flg)
+    {
         emit availablePortsChanged();
+    }
 }
 
 
@@ -100,9 +104,11 @@ void SerialPortManager::stopTimer()
 void SerialPortManager::safeNewTimer()
 {
     // SAFE_NEW<QTimer>(this->m_timer);
-    if (!this->m_timer) {
+    if (!this->m_timer)
+    {
         m_mutex->lock();
-        if (!this->m_timer) {
+        if (!this->m_timer)
+        {
             this->m_timer = new QTimer(this);
             connect(m_timer, &QTimer::timeout,
                     this, &SerialPortManager::updateAvailablePorts,

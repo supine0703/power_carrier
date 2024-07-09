@@ -31,8 +31,8 @@ QFont Configurations::LoadIconFont()
         QFontDatabase::applicationFontFamilies(
             QFontDatabase::addApplicationFont(
                 ":/icon/res/iconfont/iconfont.ttf"
-        )
-    ).at(0)
-);
+            )
+        ).at(0)
+    );
     return iconFont;
 }

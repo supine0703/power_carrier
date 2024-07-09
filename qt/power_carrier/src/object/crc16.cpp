@@ -10,7 +10,9 @@ quint16 CRC16::XMODEM(const QByteArray& bytes, int len)
     Q_ASSERT(end > 0);
     quint16 crc16 = 0;
     for (int i = 0; i < end; i++)
+    {
         crc16 = (crc16 << 8) ^ t1021[((crc16 >> 8) ^ bytes.at(i)) & 0xff];
+    }
     return crc16;
 }
 

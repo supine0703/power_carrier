@@ -133,7 +133,7 @@ SQLiteWidget::SQLiteWidget(QWidget* parent)
 
     this->loadSetting();
 
-    /*
+#if 0
     QSqlDatabase db;
     if (QSqlDatabase::contains())
     {
@@ -178,7 +178,7 @@ SQLiteWidget::SQLiteWidget(QWidget* parent)
             db.close();
         }
     }
-    */
+#endif
 }
 
 SQLiteWidget::~SQLiteWidget()
@@ -381,7 +381,7 @@ void SQLiteWidget::openTable(const QString& filePath)
         ui->infoGroupBox->setEnabled(true);
         SETTINGS().setValue(_DB_LAST_OPEN_, filePath);
 
-        /*
+#if 0
         auto tab = new QSqlTableModel(this, db);
         tab->setTable("slaves");
         tab->setEditStrategy(QSqlTableModel::OnManualSubmit);
@@ -403,7 +403,7 @@ void SQLiteWidget::openTable(const QString& filePath)
         ui->tableView->setColumnHidden(tab->fieldIndex("word"), true);
         ui->tableView->setColumnHidden(tab->fieldIndex("info"), true);
         ui->tableView->setColumnHidden(tab->fieldIndex("memo"), true);
-        */
+#endif
 
         dbCount--;
         if (!dbCount)
@@ -828,15 +828,18 @@ void SQLiteWidget::on_delPushButton_clicked()
         db.close();
     }
     else
+    {
         QMessageBox::critical(this, "错误", "db:" + db.lastError().text());
-
+    }
 }
 
 
 void SQLiteWidget::on_iL5MPlainTextEdit_textChanged()
 {
     if (!ui->cancelPushButton->isEnabled())
+    {
         ui->iL5MPlainTextEdit->undo();
+    }
 }
 
 

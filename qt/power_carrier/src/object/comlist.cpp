@@ -38,11 +38,15 @@ void ComList::updateComBox(int min, int max)
 {
     this->comMin = min;
     if (this->comsBox == nullptr)
+    {
         return;
+    }
     // stop update available ports
     bool ts = this->spManager->isStart();
     if (ts)
+    {
         emit this->stop_timer();
+    }
 
     // reset com status's flg
     auto len = max - min + 1;
@@ -52,7 +56,9 @@ void ComList::updateComBox(int min, int max)
     // set options
     QStringList comList;
     for (int i = min; i <= max; i++)
+    {
         comList << comX.arg(i);
+    }
 
     // update serialPortComboBox and repos current index
     auto n = this->comPortNum - min;
@@ -65,7 +71,9 @@ void ComList::updateComBox(int min, int max)
 
     // re start update available ports
     if (ts)
+    {
         emit this->start_timer();
+    }
 }
 
 
@@ -77,11 +85,13 @@ void ComList::setComsBox(QComboBox* comsBox)
         this->updateComBox(
             SETTINGS().value(_COM_RANGE_MIN_).toInt(),
             SETTINGS().value(_COM_RANGE_MAX_).toInt()
-    );
+        );
         emit this->start_timer();
     }
     else
+    {
         emit this->stop_timer();
+    }
 }
 
 
@@ -98,7 +108,9 @@ void ComList::scanComPortPush()
     static QRegularExpressionMatch match;
 
     if (this->comsBox == nullptr)
+    {
         return;
+    }
 
 
     auto currentCom = this->comsBox->currentText();
@@ -136,6 +148,8 @@ void ComList::scanComPortPush()
     }
 
     if (currentCom != this->comsBox->currentText())
+    {
         emit currentComChanged();
+    }
 }
 

@@ -58,14 +58,17 @@ void AddSlaveDialog::sureOk()
 {
     auto ok(sure1 && sure2 && sure3 && sure4);
     if (ui->buttonBox->button(QDialogButtonBox::Ok)->isEnabled() != ok)
+    {
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(ok);
+    }
 }
 
 
 void AddSlaveDialog::createStateRow(int row)
 {
     ui->stateTableWidget->insertRow(row);
-    auto initItem = [this, row](int col) {
+    auto initItem = [this, row](int col)
+    {
         sure4s.insert((row * 2) | col, false);
         auto _it = new QTableWidgetItem();
         _it->setTextAlignment(Qt::AlignCenter);
@@ -114,10 +117,14 @@ int AddSlaveDialog::exec(QStringList base, QStringList word, QStringList wtxt)
     this->on_typeLineEdit_editingFinished();
     this->on_nameLineEdit_editingFinished();
     for (int c = ui->stateTableWidget->columnCount() - 1; c >= 0; c--)
+    {
         for (int r = ui->stateTableWidget->rowCount() - 1; r > 0; r--)
+        {
             this->on_stateTableWidget_itemChanged(
                 ui->stateTableWidget->item(r, c)
             );
+        }
+    }
 
     ui->addrLineEdit->setEnabled(false);
     auto exec = QDialog::exec();
@@ -133,7 +140,9 @@ void AddSlaveDialog::on_addrLineEdit_editingFinished()
     auto flg(regex->match(txt).hasMatch());
     ui->addrWarningLabel->setHidden(flg);
     if(flg && txt.length() == 1)
+    {
         ui->addrLineEdit->setText(QString("0%1").arg(txt));
+    }
     ui->addrLineEdit->setStyleSheet(flg ? "" : "color:red;");
     sure1 = flg;
     sureOk();
@@ -167,7 +176,9 @@ void AddSlaveDialog::on_stateTableWidget_itemChanged(QTableWidgetItem *item)
     Q_ASSERT(item->column() == 0 || item->column() == 1);
     static bool running = false;
     if (running)
+    {
         return;
+    }
     running = true;
 
     auto txt(item->text());
@@ -180,17 +191,25 @@ void AddSlaveDialog::on_stateTableWidget_itemChanged(QTableWidgetItem *item)
         {
             item->setText(txt = txt.toUpper());
             if(txt.length() == 1)
+            {
                 item->setText(txt = QString("0%1").arg(txt));
+            }
 
             auto its(ui->stateTableWidget->findItems(txt, Qt::MatchExactly));
             auto count = its.count();
             if (count > 1)
             {
                 for (auto it : its)
+                {
                     if (it->column() != 0)
+                    {
                         count--;
+                    }
+                }
                 if (count > 1)
+                {
                     flg = false;
+                }
             }
         }
     }
@@ -204,14 +223,20 @@ void AddSlaveDialog::on_stateTableWidget_itemChanged(QTableWidgetItem *item)
     if (sure4)
     {
         if (sure4s.length() <= 2)
+        {
             sure4 = false;
+        }
         else
+        {
             for (auto s : sure4s)
+            {
                 if (!s)
                 {
                     sure4 = false;
                     break;
                 }
+            }
+        }
     }
     ui->stateWarningLabel->setHidden(sure4);
     sureOk();
@@ -237,7 +262,9 @@ void AddSlaveDialog::on_resetPushButton_clicked()
     ui->memoPlainTextEdit->clear();
 
     for (int i = ui->stateTableWidget->rowCount() - 1; i > 0; i--)
+    {
         ui->stateTableWidget->removeRow(i);
+    }
     this->createStateRow(1);
 }
 
@@ -249,10 +276,14 @@ void AddSlaveDialog::on_spacePushButton_clicked()
     this->on_typeLineEdit_editingFinished();
     this->on_nameLineEdit_editingFinished();
     for (int c = ui->stateTableWidget->columnCount() - 1; c >= 0; c--)
+    {
         for (int r = ui->stateTableWidget->rowCount() - 1; r > 0; r--)
+        {
             this->on_stateTableWidget_itemChanged(
                 ui->stateTableWidget->item(r, c)
             );
+        }
+    }
 }
 
 
@@ -268,7 +299,9 @@ void AddSlaveDialog::on_insertRowPushButton_clicked()
     {
         auto row(ui->stateTableWidget->currentRow());
         if (row > 0)
+        {
             this->createStateRow(row);
+        }
     }
 }
 
@@ -278,7 +311,9 @@ void AddSlaveDialog::on_delRowPushButton_clicked()
     auto row = ui->stateTableWidget->currentRow();
 
     if (row == 0)
+    {
         QMessageBox::warning(this, "警告", "第1行是必选项，不可删除！");
+    }
     else if (ui->stateTableWidget->rowCount() == 2)
     {
         QMessageBox::warning(this, "警告", QString("不可删除，至少需要两项！"));
